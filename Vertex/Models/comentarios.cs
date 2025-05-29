@@ -11,5 +11,5 @@ namespace Vertex.Models
         public int ticket_id { get; set; }
         public int usuario_id { get; set; }
     }
-}
+
 }
