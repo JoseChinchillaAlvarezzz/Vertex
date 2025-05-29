@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using Vertex.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllers();
+
+//Inyeccion por dependencia del string de conexion al contexto
+builder.Services.AddDbContext<ticketsContext>(options =>
+    options.UseSqlServer(
+            builder.Configuration.GetConnectionString("ticketsDbConnection")
+        )
+);
 
 var app = builder.Build();
 
