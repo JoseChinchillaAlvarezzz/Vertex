@@ -2,10 +2,10 @@
 
 namespace Vertex.Models
 {
-    public class rol
+    public class prioridades
     {
         [Key]
         public int id { get; set; }
-        public string rol { get; set; }
+        public string prioridad { get; set; }
     }
 }
