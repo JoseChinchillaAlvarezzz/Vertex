@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Proyecto.Models.Ticket>
+@{
+    ViewBag.Title = "Mis Tickets";
+    var usuarioNombre = ViewBag.NombreUsuario as string;
+}
+<div style="background-color: #a9cee5; min-height: 100vh; padding: 30px;">
+    <h1 style="font-size: 36px;">Bienvenido @usuarioNombre</h1>
+    <h2>Mis tickets pendientes</h2>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
+        @foreach (var ticket in Model)
+        {
+            <div style="background-color: white; padding: 15px; border-radius: 10px; width: 180px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                <small style="color: #999;">Mis Tickets</small>
+                <h4>Ticket @ticket.Id</h4>
+                <a href="@Url.Action("Detalle", "Tickets", new { id = ticket.Id })" class="btn btn-warning btn-sm">Ver Detalle</a>
+            </div>
+        }
+    </div>
+
+    <div style="margin-top: 50px; text-align: center;">
+        <a href="@Url.Action("Crear", "Tickets")" class="btn btn-lg" style="background-color: #f9df56; color: black; padding: 15px 30px; font-size: 20px; border-radius: 30px; font-weight: bold;">
+            Crear un Nuevo Ticket
+        </a>
+    </div>
+
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <img src="~/images/home-icon.png" alt="Inicio" style="width: 30px; margin-right: 10px;" />
+        <img src="~/images/back-icon.png" alt="Regresar" style="width: 30px;" />
+    </div>
+</div>
