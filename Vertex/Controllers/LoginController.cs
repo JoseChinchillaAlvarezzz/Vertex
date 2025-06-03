@@ -22,26 +22,26 @@ namespace Vertex.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // Verificar si es un usuario interno (técnico o administrador)
+            // Buscar en usuarios (Administrador o Técnico)
             var usuario = await _context.usuarios
-                .Include(u => u.rol_id)
                 .FirstOrDefaultAsync(u => u.email == email && u.contrasenia == password);
 
             if (usuario != null)
             {
                 HttpContext.Session.SetInt32("usuarioId", usuario.id);
                 HttpContext.Session.SetString("nombre", usuario.nombre);
-                HttpContext.Session.SetInt32("rol", usuario.rol_id);
-                // Redirección según rol
+                HttpContext.Session.SetInt32("rolId", usuario.rol_id);
+
                 if (usuario.rol_id == 1) // Administrador
                     return RedirectToAction("Index", "Admin");
-                else if (usuario.rol_id == 2) // Técnico
-                    return RedirectToAction("Index", "Tecnico"); // o un controlador específico de técnicos si lo tienes
+
+                if (usuario.rol_id == 2) // Técnico
+                    return RedirectToAction("Index", "Cliente");
 
                 return RedirectToAction("Login");
             }
 
-            // Buscar en tabla de clientes
+            // Buscar en clientes
             var cliente = await _context.clientes
                 .FirstOrDefaultAsync(c => c.email == email && c.contrasenia == password);
 
@@ -57,6 +57,13 @@ namespace Vertex.Controllers
             ViewBag.ErrorMessage = "Correo o contraseña incorrectos.";
             return View();
         }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
         public IActionResult Index()
         {
             return View();

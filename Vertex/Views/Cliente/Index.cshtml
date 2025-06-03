@@ -1,25 +1,34 @@
 ﻿@model IEnumerable<Vertex.Models.tickets>
 @{
     ViewBag.Title = "Mis Tickets";
-    var usuarioNombre = ViewBag.NombreUsuario as string;
+    var nombreUsuario = ViewBag.NombreUsuario as string;
 }
+
 <div style="background-color: #a9cee5; min-height: 100vh; padding: 30px;">
-    <h1 style="font-size: 36px;">Bienvenido @usuarioNombre</h1>
+    <h1 style="font-size: 36px;">Bienvenido @nombreUsuario</h1>
     <h2>Mis tickets pendientes</h2>
 
-    <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
-        @foreach (var ticket in Model)
-        {
-            <div style="background-color: white; padding: 15px; border-radius: 10px; width: 180px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-                <small style="color: #999;">Mis Tickets</small>
-                <h4>Ticket @ticket.id</h4>
-                <a href="@Url.Action("Detalle", "Tickets", new { id = ticket.id })" class="btn btn-warning btn-sm">Ver Detalle</a>
-            </div>
-        }
-    </div>
+    @if (Model != null && Model.Any())
+    {
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
+            @foreach (var ticket in Model)
+            {
+                <div style="background-color: white; padding: 15px; border-radius: 10px; width: 200px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                    <small style="color: #999;">Ticket ID</small>
+                    <h4>@ticket.id</h4>
+                    <p style="font-size: 14px; margin-bottom: 5px;">@ticket.titulo</p>
+                    <a href="@Url.Action("Detalle", "Cliente", new { id = ticket.id })" class="btn btn-sm btn-warning mt-2">Ver Detalle</a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">No tienes tickets registrados aún.</div>
+    }
 
     <div style="margin-top: 50px; text-align: center;">
-        <a href="@Url.Action("Crear", "Tickets")" class="btn btn-lg" style="background-color: #f9df56; color: black; padding: 15px 30px; font-size: 20px; border-radius: 30px; font-weight: bold;">
+        <a href="@Url.Action("Crear", "Cliente")" class="btn btn-lg" style="background-color: #f9df56; color: black; padding: 15px 30px; font-size: 20px; border-radius: 30px; font-weight: bold;">
             Crear un Nuevo Ticket
         </a>
     </div>
