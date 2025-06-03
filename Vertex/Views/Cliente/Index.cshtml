@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Proyecto.Models.Ticket>
+﻿@model IEnumerable<Vertex.Models.tickets>
 @{
     ViewBag.Title = "Mis Tickets";
     var usuarioNombre = ViewBag.NombreUsuario as string;
@@ -12,8 +12,8 @@
         {
             <div style="background-color: white; padding: 15px; border-radius: 10px; width: 180px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
                 <small style="color: #999;">Mis Tickets</small>
-                <h4>Ticket @ticket.Id</h4>
-                <a href="@Url.Action("Detalle", "Tickets", new { id = ticket.Id })" class="btn btn-warning btn-sm">Ver Detalle</a>
+                <h4>Ticket @ticket.id</h4>
+                <a href="@Url.Action("Detalle", "Tickets", new { id = ticket.id })" class="btn btn-warning btn-sm">Ver Detalle</a>
             </div>
         }
     </div>
