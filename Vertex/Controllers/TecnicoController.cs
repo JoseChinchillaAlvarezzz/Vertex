@@ -15,12 +15,16 @@ namespace Vertex.Controllers
 
         public IActionResult Index()
         {
+            var nombre = HttpContext.Session.GetString("nombre");
+            ViewBag.NombreUsuario = nombre ?? "Usuario";
             return View();
         }
 
-        public IActionResult Tickets()
+        public IActionResult MisAsignaciones()
         {
-            // Trae todos los tickets, puedes filtrar por técnico si lo deseas
+            var nombre = HttpContext.Session.GetString("nombre");
+            ViewBag.NombreUsuario = nombre ?? "Usuario";
+
             var listadoTickets = _context.tickets.ToList();
             return View(listadoTickets);
         }
