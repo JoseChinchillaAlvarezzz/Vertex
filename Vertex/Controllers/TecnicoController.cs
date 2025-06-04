@@ -8,5 +8,10 @@ namespace Vertex.Controllers
         {
             return View();
         }
+        public IActionResult Tickets()
+        {
+            // Aquí puedes pasar un modelo si luego lo necesitas
+            return View();
+        }
     }
 }
