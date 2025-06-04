@@ -1,0 +1,234 @@
+﻿@model Vertex.Models.tickets // Cambia por tu ViewModel si usas uno
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Detalle Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'Quicksand', Arial, sans-serif;
+        }
+
+        .detalle-container {
+            max-width: 98vw;
+            margin: 20px auto;
+            background: #fff;
+            border: 5px solid #8ca4ed;
+            border-radius: 14px;
+            padding: 28px 28px 40px 28px;
+            box-sizing: border-box;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .estado-pendiente {
+            color: #be1a1a;
+            font-weight: bold;
+        }
+
+        .info-contacto {
+            background: #f7f7f7;
+            border-radius: 7px;
+            padding: 14px 20px;
+            margin-top: 12px;
+            margin-bottom: 18px;
+        }
+
+        .row-flex {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .campo-grande {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .campo-peq {
+            flex: 0 0 30%;
+        }
+
+        .input-show {
+            width: 95%;
+            background: #fff;
+            border: 2px solid #bbb;
+            border-radius: 24px;
+            padding: 8px 24px;
+            font-size: 1.15rem;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .desc-problema {
+            background: #f7f7f7;
+            padding: 10px 14px;
+            border-radius: 7px;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .tablas-section {
+            display: flex;
+            gap: 28px;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .table-card {
+            background: #fff;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            padding: 10px 12px;
+            min-width: 220px;
+            width: 31%;
+        }
+
+            .table-card h4 {
+                margin: 0 0 8px 0;
+                font-size: 1.11rem;
+                font-weight: bold;
+                text-align: center;
+            }
+
+        .table-simple {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+        }
+
+            .table-simple th, .table-simple td {
+                padding: 3px 7px;
+                border-bottom: 1px solid #e2e2e2;
+            }
+
+        .btn-iniciar {
+            display: block;
+            margin: 30px auto 0 auto;
+            padding: 16px 52px;
+            font-size: 2rem;
+            border-radius: 30px;
+            background: #f7e87e;
+            color: #232323;
+            font-family: 'DM Serif Display', serif;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 1px 6px rgba(90,90,90,0.10);
+            cursor: pointer;
+            transition: filter .12s;
+        }
+
+            .btn-iniciar:active {
+                filter: brightness(0.97);
+            }
+
+        .icons-header {
+            position: absolute;
+            top: 32px;
+            right: 60px;
+            display: flex;
+            gap: 22px;
+            z-index: 5;
+        }
+
+            .icons-header img {
+                width: 46px;
+                height: 46px;
+                cursor: pointer;
+            }
+    </style>
+</head>
+<body>
+    <div class="detalle-container">
+        <div class="top-row">
+            <div>
+                <div><b>Ticket #@Model.id</b></div>
+                <div>Estado: <span class="estado-pendiente">Pendiente</span></div>
+            </div>
+            <div class="icons-header">
+                <img src="~/images/home_icono.png" alt="Cerrar sesión" title="Cerrar sesión" />
+                <img src="~/images/regres_icono.png" alt="Regresar" title="Regresar" />
+            </div>
+        </div>
+        <div class="info-contacto">
+            <b>Información de Contacto</b><br />
+            Nombre: @* Aquí pones el nombre del cliente *@<br />
+            Teléfono: @* Teléfono *@<br />
+            Correo: @* Correo *@
+        </div>
+
+        <div class="row-flex">
+            <div class="campo-peq">
+                <div><b>Categoria</b></div>
+                <div class="input-show">@* Categoria aquí *@</div>
+            </div>
+            <div class="campo-peq">
+                <div><b>Prioridad</b></div>
+                <div class="input-show">@* Prioridad aquí *@</div>
+            </div>
+            <div class="campo-peq">
+                <div><b>Nombre de la Aplicación afectada</b></div>
+                <div class="input-show">@Model.aplicacion</div>
+            </div>
+        </div>
+
+        <div>
+            <b>Descripción del Problema</b>
+            <div class="desc-problema">@Model.descripcion</div>
+        </div>
+
+        <div class="tablas-section">
+            <div class="table-card">
+                <h4>Archivos adjuntos</h4>
+                <table class="table-simple">
+                    <tr>
+                        <td>
+                            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828926.png" alt="archivo" width="30" />
+                            Archivos_adjunto_1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828926.png" alt="archivo" width="30" />
+                            Archivos_adjunto_2
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-card">
+                <h4>Comentarios</h4>
+                <table class="table-simple">
+                    <tr><th>Título</th><th></th></tr>
+                    <tr>
+                        <td>El servidor es viejo</td>
+                        <td><a href="#">Ver</a></td>
+                    </tr>
+                    <tr>
+                        <td>Falta limpieza</td>
+                        <td><a href="#">Ver</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-card">
+                <h4>Tareas</h4>
+                <table class="table-simple">
+                    <tr><th>Título</th><th></th></tr>
+                    <tr>
+                        <td>Limpiar servidor</td>
+                        <td><a href="#">Ver</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <button class="btn-iniciar">Iniciar Trabajo</button>
+    </div>
+</body>
+</html>

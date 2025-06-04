@@ -28,5 +28,11 @@ namespace Vertex.Controllers
             var listadoTickets = _context.tickets.ToList();
             return View(listadoTickets);
         }
+        public IActionResult ver_detalle () 
+        
+        
+        
+        
+        { return View(); }
     }
 }
