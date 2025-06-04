@@ -36,9 +36,36 @@ namespace Vertex.Controllers
                     .ToList();
             }
 
-            return View(listaTickets);
+            return View("Index", listaTickets);
+
         }
-        public IActionResult VerDetalle(int id)
+        public IActionResult MisAsignaciones()
+        {
+            var nombreUsuario = HttpContext.Session.GetString("nombre");
+            ViewBag.NombreUsuario = nombreUsuario;
+
+            int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+
+            List<tickets> listaTickets = new();
+
+            if (tecnicoId != null)
+            {
+                listaTickets = _context.asignaciones
+                    .Where(a => a.usuario_id == tecnicoId)
+                    .Select(a => a.ticket_id)
+                    .Distinct()
+                    .Join(_context.tickets,
+                          id => id,
+                          t => t.id,
+                          (id, t) => t)
+                    .Where(t => t.estado_ticket_id == 1) // Pendientes
+                    .ToList();
+            }
+
+            return View("MisAsignaciones", listaTickets);
+        }
+
+        public IActionResult Detalle(int id)
         {
             // 1. Buscar el ticket
             var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
@@ -57,7 +84,8 @@ namespace Vertex.Controllers
             ViewBag.Estado = estado?.estado ?? "Sin estado";
             ViewBag.Cliente = cliente != null ? $"{cliente.nombre} {cliente.apellido}" : "Sin cliente";
 
-            return View(ticket);
+            return View("Detalle", ticket);
+
         }
 
     }

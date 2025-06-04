@@ -17,6 +17,7 @@
             font-family: 'DM Serif Display', serif;
             text-align: center;
         }
+
         .logout-icon {
             position: absolute;
             top: 30px;
@@ -24,17 +25,20 @@
             font-size: 58px;
             cursor: pointer;
         }
+
         .bienvenido {
             margin-top: 38px;
             font-size: 2.8rem;
             font-weight: bold;
         }
+
         .logo-vertex {
             margin: 36px auto 40px auto;
             width: 360px;
             height: 360px;
             display: block;
         }
+
         .panel-botones {
             display: flex;
             flex-direction: column;
@@ -42,11 +46,13 @@
             gap: 38px;
             margin-top: 10px;
         }
+
         .fila-botones {
             display: flex;
             gap: 48px;
             margin-bottom: 22px;
         }
+
         .btn-menu {
             background: #fff163;
             color: #222;
@@ -64,16 +70,34 @@
             transition: background 0.13s, box-shadow 0.13s;
             text-decoration: none;
         }
-        .btn-menu:active {
-            background: #fff784;
+
+            .btn-menu:active {
+                background: #fff784;
+            }
+
+            .btn-menu svg, .btn-menu i {
+                font-size: 2.1rem;
+            }
+
+        {
+            .logo-vertex
+
+        {
+            width: 70vw;
+            height: 70vw;
+            max-width: 350px;
+            max-height: 350px;
         }
-        .btn-menu svg, .btn-menu i {
-            font-size: 2.1rem;
+
+        .btn-menu {
+            font-size: 1.2rem;
+            padding: 13px 14px;
         }
- {
-            .logo-vertex { width: 70vw; height: 70vw; max-width: 350px; max-height: 350px;}
-            .btn-menu { font-size: 1.2rem; padding: 13px 14px;}
-            .fila-botones { gap: 10px; }
+
+        .fila-botones {
+            gap: 10px;
+        }
+
         }
     </style>
     <!-- Bootstrap icons -->
@@ -91,11 +115,11 @@
 
     <div class="panel-botones">
         <div class="fila-botones">
-            <a href="@Url.Action("MisAsignaciones", "Empleado")" class="btn-menu">
+            <a href="@Url.Action("MisAsignaciones", "Tecnico")" class="btn-menu">
                 Mis Asignaciones
                 <i class="bi bi-clipboard-check"></i>
             </a>
-            <a href="@Url.Action("Historial", "Empleado")" class="btn-menu">
+            <a href="@Url.Action("Historial", "Tecnico")" class="btn-menu">
                 Historial
                 <i class="bi bi-archive"></i>
             </a>
