@@ -14,10 +14,7 @@ namespace Vertex.Controllers
             _context = context;
         }
 
-        public IActionResult Login() 
-        {
-            return View();
-        }
+        
 
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
@@ -61,7 +58,7 @@ namespace Vertex.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return RedirectToAction("Index");
         }
 
         public IActionResult Index()
