@@ -22,13 +22,28 @@ namespace Vertex.Controllers
             var listadoTicketsPendientes = (from t in _context.tickets
                                             join p in _context.prioridades on t.prioridad_id equals p.id
                                             where t.usuario_id == adminId
+                                            && !_context.asignaciones.Any(a => a.ticket_id == t.id)
                                             select new
                                             {
                                                 id = t.id,
+                                                titulo = t.titulo,
                                                 prioridad = p.prioridad
                                             }).ToList();
 
-            ViewData["listadoTickets"] = listadoTicketsPendientes;
+            var listadoTicketsActivos = (from t in _context.tickets
+                                         join p in _context.prioridades on t.prioridad_id equals p.id
+                                         where (t.estado_ticket_id == 1 || t.estado_ticket_id == 2 || t.estado_ticket_id ==3)
+                                         && t.usuario_id == adminId
+                                         && _context.asignaciones.Any(a => a.ticket_id == t.id)
+                                         select new 
+                                         {
+                                             id = t.id,
+                                             titulo = t.titulo,
+                                             prioridad = p.prioridad
+                                         }).ToList();
+
+            ViewData["listadoTicketsPendientes"] = listadoTicketsPendientes;
+            ViewData["listadoTicketsActivos"] = listadoTicketsActivos;
 
             return View();
         }

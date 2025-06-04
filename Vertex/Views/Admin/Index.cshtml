@@ -1,320 +1,199 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewBag.Title = "Mis tickets pendientes";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Tickets pendientes - Panel Admin</title>
+    <title>@ViewBag.Title</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <style>
-
         body {
-        margin: 0;
-        padding: 0;
-        background: #abd4eb;
-        font-family: 'Quicksand', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #abd4eb;
+            font-family: 'Quicksand', Arial, sans-serif;
         }
 
-        .header-icons 
-        {
-        position: absolute;
-        top: 32px;
-        right: 60px;
-        display: flex;
-        gap: 22px;
-        z-index: 5;
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 38px 24px 0 24px;
         }
 
-        .header-icons img 
-        {
-        width: 46px;
-        height: 46px;
-        cursor: pointer;
+        .welcome {
+            font-size: 3.2rem;
+            font-family: 'DM Serif Display', serif;
+            margin-top: 18px;
+            margin-bottom: 0;
         }
 
-        .container 
-        {
-        max-width: 1000px;
-        margin: 0 auto;
-        min-height: 100vh;
-        padding-top: 20px;
-        position: relative;
+        .subtitle {
+            font-size: 2.2rem;
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            color: #222;
+            margin: 12px 0 32px 2px;
         }
 
-        .welcome 
-        {
-        font-size: 3.1rem;
-        font-family: 'DM Serif Display', serif;
-        font-weight: 400;
-        color: #181818;
-        margin-top: 16px;
-        margin-bottom: 2px;
-        text-align: left;
+        .ticket-section {
+            margin-bottom: 38px;
         }
 
-        .subtitle 
-        {
-        font-size: 1.4rem;
-        font-family: 'Quicksand', Arial, sans-serif;
-        font-weight: 500;
-        color: #222;
-        margin-bottom: 38px;
-        margin-top: 28px;
-        margin-left: 2px;
-        text-align: left;
+        .ticket-section-title {
+            font-size: 1.55rem;
+            font-weight: bold;
+            color: #1d1d1d;
+            margin: 0 0 18px 6px;
+            font-family: 'Quicksand', Arial, sans-serif;
         }
 
-        .main-flex 
-        {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: flex-start;
-        gap: 60px;
-        margin-left: 40px;
-        margin-bottom: 40px;
+        .tickets-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 48px 48px;
+            margin-bottom: 20px;
         }
 
-        .tickets-list 
-        {
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
-        padding: 18px 22px 18px 22px;
-        width: 265px;
-        margin-bottom: 0;
+        .ticket-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 7px 0 rgba(0,0,0,0.12);
+            width: 340px;
+            height: 170px;
+            margin-bottom: 0;
+            padding: 17px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        .tickets-list h3 
-        {
-        font-size: 1.12rem;
-        font-weight: bold;
-        margin: 0 0 8px 0;
-        color: #222;
-        border-bottom: 1.5px solid #ededed;
-        padding-bottom: 7px;
-        font-family: 'Quicksand', Arial, sans-serif;
+        .ticket-title {
+            color: #888;
+            font-size: 0.92rem;
+            font-weight: 500;
+            margin-bottom: 2px;
         }
 
-        .ticket-item 
-        {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-        margin-top: 4px;
+        .ticket-id {
+            font-size: 1.16rem;
+            color: #232323;
+            font-weight: 600;
+            margin-bottom: 6px;
         }
 
-        .ticket-info 
-        {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        .ticket-desc {
+            font-size: 1rem;
+            color: #313131;
+            margin-bottom: 10px;
+            margin-top: 0;
         }
 
-        .ticket-star 
-        {
-        color: #232323;
-        font-size: 1.15rem;
-        margin-right: 7px;
-        margin-bottom: 1px;
+        .btn-detalle {
+            background: #f3d542;
+            color: #232323;
+            font-size: 1.04rem;
+            font-family: inherit;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 1px 3px 0 rgba(90,90,90,0.09);
+            padding: 10px 28px;
+            cursor: pointer;
+            transition: filter 0.12s;
+            align-self: flex-end;
         }
 
-        .ticket-title 
-        {
-        font-size: 1.07rem;
-        font-weight: 500;
-        color: #232323;
-        }
-
-        .ticket-priority 
-        {
-        font-size: 0.95rem;
-        color: #888;
-        font-weight: 400;
-        margin-left: 21px;
-        margin-top: -2px;
-        margin-bottom: 2px;
-        }
-
-        .ticket-actions 
-        {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 2px;
-        }
-
-        .btn-mini 
-        {
-        background: #fff;
-        color: #232323;
-        font-size: 1.01rem;
-        border: 1.7px solid #232323;
-        border-radius: 19px;
-        padding: 7px 18px;
-        font-family: 'Quicksand', Arial, sans-serif;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: none;
-        margin-left: 10px;
-        transition: background 0.1s, color 0.1s;
-        }
-
-        .btn-mini:hover 
-        {
-        background: #f7e87e;
-        color: #222;
-        }
-
-        /* Botones de abajo */
-        .panel-buttons 
-        {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 22px 44px;
-        width: 550px;
-        margin: 0 auto;
-        margin-top: 18px;
-        }
-
-        .btn-panel 
-        {
-        background: #ede36e;
-        color: #232323;
-        font-size: 1.35rem;
-        font-family: 'Quicksand', Arial, sans-serif;
-        font-weight: 600;
-        border-radius: 18px;
-        border: none;
-        box-shadow: 0 3px 12px 0 rgba(90,90,90,0.11);
-        padding: 18px 0;
-        cursor: pointer;
-        transition: filter 0.1s;
-        outline: none;
-        }
-
-        .btn-panel:active 
-        {
-        filter: brightness(0.95);
-        }
-
-        @@media (max-width: 950px) 
-        {
-        .main-flex
+            .btn-detalle:active {
+                filter: brightness(0.95);
+            }
+        @@media (max-width: 1100px) {
+            .tickets-row
 
         {
-        flex-direction: column;
-        gap: 32px;
-        margin-left: 10px;
+            gap: 30px 24px;
         }
 
-        .panel-buttons 
-        {
-        width: 96vw;
+        .ticket-card {
+            width: 98vw;
+            max-width: 340px;
         }
 
         }
-
-        @@media (max-width: 650px) {
-        .container
+        @@media (max-width: 700px) {
+            .welcome
 
         {
-        padding: 0 4px;
+            font-size: 1.5rem;
         }
 
-        .welcome 
-        {
-        font-size: 2rem;
+        .subtitle {
+            font-size: 1rem;
         }
 
-        .main-flex 
-        {
-        flex-direction: column;
-        align-items: center;
+        .ticket-section-title {
+            font-size: 1.12rem;
         }
 
-        .tickets-list 
-        {
-        width: 98vw;
+        .tickets-row {
+            flex-direction: column;
+            gap: 24px 0;
         }
 
-        .panel-buttons 
-        {
-        width: 96vw;
+        .ticket-card {
+            width: 96vw;
+            max-width: 340px;
         }
 
-        .header-icons 
-        {
-        right: 16px;
-        top: 10px;
-        }
-
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        }</style>
 </head>
 <body>
-    <div class="header-icons">
-        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828490.png" alt="Cerrar sesión">
-    </div>
     <div class="container">
-        <div class="welcome"> @ViewBag.Bienvenida </div>
-        <div class="subtitle">Tickets pendientes</div>
-        <div class="main-flex">
-            <!-- Sin asignaciones -->
-            <div class="tickets-list">
-                <h3>Sin asignaciones</h3>
-                @foreach (var ticket in (IEnumerable<dynamic>)ViewData["listadoTickets"])
+        <div class="welcome">Bienvenido José</div>
+        <div class="subtitle">Mis tickets pendientes</div>
+
+        <div class="ticket-section">
+            <div class="ticket-section-title">No asignados</div>
+            <div class="tickets-row">
+                <!--tickets NO asignados -->
+                @foreach (var ticket in (IEnumerable<dynamic>)ViewData["listadoTicketsPendientes"])
                 {
-                    <div class="ticket-item">
-                        <span class="ticket-info">
-                            <span><i class="fa-regular fa-star ticket-star"></i><span class="ticket-title">Ticket #@ticket.id</span></span>
-                            <span class="ticket-priority">Prioridad: @ticket.prioridad</span>
-                        </span>
-                        <span class="ticket-actions">
-                            <button class="btn-mini">Asignar técnico</button>
-                        </span>
+                    <div class="ticket-card">
+                        <div>
+                            <div class="ticket-title">Ticket ID</div>
+                            <div class="ticket-id">@ticket.id</div>
+                            <div class="ticket-desc">@ticket.titulo</div>
+                            <div class="ticket-desc">Prioridad: @ticket.prioridad</div>
+                        </div>
+                        <div class="d-flex">
+                            <button class="btn-detalle justify-content-center">Ver Detalle</button>
+                        </div>
                     </div>
                 }
-
-            </div>
-            <!-- Asignados -->
-            <div class="tickets-list">
-                <h3>Asignados</h3>
-                <div class="ticket-item">
-                    <span class="ticket-info">
-                        <span><i class="fa-regular fa-star ticket-star"></i><span class="ticket-title">Ticket #847485</span></span>
-                        <span class="ticket-priority">Prioridad: Crítica</span>
-                    </span>
-                    <span class="ticket-actions">
-                        <button class="btn-mini">Ver detalle</button>
-                    </span>
-                </div>
-                <div class="ticket-item">
-                    <span class="ticket-info">
-                        <span><i class="fa-regular fa-star ticket-star"></i><span class="ticket-title">Ticket #684993</span></span>
-                        <span class="ticket-priority">Prioridad: Baja</span>
-                    </span>
-                    <span class="ticket-actions">
-                        <button class="btn-mini">Ver detalle</button>
-                    </span>
-                </div>
-                <div class="ticket-item">
-                    <span class="ticket-info">
-                        <span><i class="fa-regular fa-star ticket-star"></i><span class="ticket-title">Ticket #58493</span></span>
-                        <span class="ticket-priority">Prioridad: Importante</span>
-                    </span>
-                    <span class="ticket-actions">
-                        <button class="btn-mini">Ver detalle</button>
-                    </span>
-                </div>
             </div>
         </div>
-        <!-- Panel de botones -->
-        <div class="panel-buttons">
-            <button class="btn-panel">Crear Usuarios</button>
-            <button class="btn-panel">DashBoard</button>
-            <button class="btn-panel">Lista de Usuarios</button>
-            <button class="btn-panel">Ver Informes</button>
+        <div class="ticket-section">
+            <div class="ticket-section-title">Asignados</div>
+            <div class="tickets-row">
+                <!--tickets activos -->
+                @foreach (var ticket in (IEnumerable<dynamic>)ViewData["listadoTicketsActivos"])
+                {
+                    <div class="ticket-card">
+                        <div>
+                            <div class="ticket-title">Ticket ID</div>
+                            <div class="ticket-id">@ticket.id</div>
+                            <div class="ticket-desc">@ticket.titulo</div>
+                            <div class="ticket-desc">Prioridad: @ticket.prioridad</div>
+                        </div>
+                        <div class="d-flex">
+                            <button class="btn-detalle justify-content-center">Ver Detalle</button>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </body>
