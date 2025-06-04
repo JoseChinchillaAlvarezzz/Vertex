@@ -13,6 +13,7 @@ namespace Vertex.Controllers
         {
             _context = context;
         }
+
         public IActionResult Index()
         {
             
