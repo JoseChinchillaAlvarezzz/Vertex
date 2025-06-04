@@ -1,0 +1,108 @@
+﻿@{
+    Layout = null;
+    var nombreUsuario = ViewBag.NombreUsuario as string ?? "Usuario";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenido @nombreUsuario - Vertex</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+            text-align: center;
+        }
+        .logout-icon {
+            position: absolute;
+            top: 30px;
+            right: 48px;
+            font-size: 58px;
+            cursor: pointer;
+        }
+        .bienvenido {
+            margin-top: 38px;
+            font-size: 2.8rem;
+            font-weight: bold;
+        }
+        .logo-vertex {
+            margin: 36px auto 40px auto;
+            width: 360px;
+            height: 360px;
+            display: block;
+        }
+        .panel-botones {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 38px;
+            margin-top: 10px;
+        }
+        .fila-botones {
+            display: flex;
+            gap: 48px;
+            margin-bottom: 22px;
+        }
+        .btn-menu {
+            background: #fff163;
+            color: #222;
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.2rem;
+            font-weight: 500;
+            padding: 18px 38px;
+            border-radius: 28px;
+            border: 2.2px solid #d9d269;
+            box-shadow: 0 3px 18px 0 rgba(150,150,150,0.11);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            cursor: pointer;
+            transition: background 0.13s, box-shadow 0.13s;
+            text-decoration: none;
+        }
+        .btn-menu:active {
+            background: #fff784;
+        }
+        .btn-menu svg, .btn-menu i {
+            font-size: 2.1rem;
+        }
+ {
+            .logo-vertex { width: 70vw; height: 70vw; max-width: 350px; max-height: 350px;}
+            .btn-menu { font-size: 1.2rem; padding: 13px 14px;}
+            .fila-botones { gap: 10px; }
+        }
+    </style>
+    <!-- Bootstrap icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body>
+    <a class="logout-icon" title="Cerrar sesión" href="@Url.Action("Logout", "Login")">
+        <i class="bi bi-box-arrow-right"></i>
+    </a>
+
+    <div class="bienvenido">Bienvenido @nombreUsuario</div>
+
+    <!-- Cambia la ruta a tu logo -->
+    <img class="logo-vertex" src="~/images/logo_vertex.png" alt="Logo Vertex" />
+
+    <div class="panel-botones">
+        <div class="fila-botones">
+            <a href="@Url.Action("MisAsignaciones", "Empleado")" class="btn-menu">
+                Mis Asignaciones
+                <i class="bi bi-clipboard-check"></i>
+            </a>
+            <a href="@Url.Action("Historial", "Empleado")" class="btn-menu">
+                Historial
+                <i class="bi bi-archive"></i>
+            </a>
+        </div>
+        <a href="@Url.Action("Crear", "Tickets")" class="btn-menu" style="width: 420px; justify-content: center;">
+            Crear un nuevo ticket
+        </a>
+    </div>
+</body>
+</html>
