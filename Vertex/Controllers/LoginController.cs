@@ -14,8 +14,6 @@ namespace Vertex.Controllers
             _context = context;
         }
 
-        
-
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
