@@ -183,7 +183,7 @@
                         Ticket @ticket.id
                     </div>
                     <!-- Aquí puedes agregar más datos del ticket si quieres -->
-                    <a href="@Url.Action("Detalle", "Tecnico", new { id = ticket.id })" class="btn-ver">Ver Detalle</a>
+                    <a href="@Url.Action("ver_detalle", "Tecnico", new { id = ticket.id })" class="btn-ver">Ver Detalle</a>
                 </div>
             }
         }

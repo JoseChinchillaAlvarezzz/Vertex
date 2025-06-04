@@ -1,4 +1,8 @@
 ﻿@model Vertex.Models.tickets // Cambia por tu ViewModel si usas uno
+@{
+    Layout = null;
+    
+}
 
 <!DOCTYPE html>
 <html lang="es">
@@ -12,6 +16,26 @@
             font-family: 'Quicksand', Arial, sans-serif;
         }
 
+        .estado-pendiente {
+            color: red;
+            font-weight: bold;
+        }
+
+        .estado-progreso {
+            color: goldenrod;
+            font-weight: bold;
+        }
+
+        .btn-iniciar {
+            background-color: #f3d542;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.4rem;
+            font-family: 'DM Serif Display', serif;
+            border-radius: 16px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
         .detalle-container {
             max-width: 98vw;
             margin: 20px auto;
@@ -77,10 +101,11 @@
 
         .tablas-section {
             display: flex;
-            gap: 28px;
-            justify-content: space-between;
-            margin-bottom: 30px;
+            justify-content: center; /* ✅ Esto centra horizontalmente */
+            gap: 40px; /* Espacio entre las tarjetas */
+            margin: 30px 0;
         }
+
 
         .table-card {
             background: #fff;
@@ -129,6 +154,31 @@
                 filter: brightness(0.97);
             }
 
+        .btn-comentario, .btn-finalizar {
+            padding: 16px 52px;
+            font-size: 2rem;
+            border-radius: 30px;
+            font-family: 'DM Serif Display', serif;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 1px 6px rgba(90,90,90,0.10);
+            cursor: pointer;
+            transition: filter .12s;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .btn-comentario {
+            background: #7fdbe7;
+            color: #1f1f1f;
+        }
+
+        .btn-finalizar {
+            background: #90ee90;
+            color: #1f1f1f;
+        }
+
+
         .icons-header {
             position: absolute;
             top: 32px;
@@ -150,34 +200,52 @@
         <div class="top-row">
             <div>
                 <div><b>Ticket #@Model.id</b></div>
-                <div>Estado: <span class="estado-pendiente">Pendiente</span></div>
+                <p>
+                    Estado:
+                    @if (ViewBag.Estado == "Pendiente")
+                    {
+                        <span class="estado-pendiente">Pendiente</span>
+                    }
+                    else if (ViewBag.Estado == "En progreso")
+                    {
+                        <span class="estado-progreso">En progreso</span>
+                    }
+                    else
+                    {
+                        <span>@ViewBag.Estado</span>
+                    }
+                </p>
+
             </div>
             <div class="icons-header">
-                <img src="~/images/home_icono.png" alt="Cerrar sesión" title="Cerrar sesión" />
-                <img src="~/images/regres_icono.png" alt="Regresar" title="Regresar" />
+                <a href="javascript:history.back()" title="Regresar">
+                    <img src="~/images/regres_icono.png" alt="Regresar" />
+                </a>
+                
             </div>
         </div>
         <div class="info-contacto">
             <b>Información de Contacto</b><br />
-            Nombre: @* Aquí pones el nombre del cliente *@<br />
-            Teléfono: @* Teléfono *@<br />
-            Correo: @* Correo *@
+            Nombre: @Model.cliente.nombre @Model.cliente.apellido <br />
+            Teléfono: @Model.cliente.telefono <br />
+            Correo: @Model.cliente.email
         </div>
 
         <div class="row-flex">
             <div class="campo-peq">
                 <div><b>Categoria</b></div>
-                <div class="input-show">@* Categoria aquí *@</div>
+                <div class="input-show">@Model.categoria?.categoria</div>
             </div>
             <div class="campo-peq">
                 <div><b>Prioridad</b></div>
-                <div class="input-show">@* Prioridad aquí *@</div>
+                <div class="input-show">@Model.prioridad?.prioridad</div>
             </div>
             <div class="campo-peq">
                 <div><b>Nombre de la Aplicación afectada</b></div>
                 <div class="input-show">@Model.aplicacion</div>
             </div>
         </div>
+
 
         <div>
             <b>Descripción del Problema</b>
@@ -186,49 +254,68 @@
 
         <div class="tablas-section">
             <div class="table-card">
-                <h4>Archivos adjuntos</h4>
-                <table class="table-simple">
-                    <tr>
-                        <td>
-                            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828926.png" alt="archivo" width="30" />
-                            Archivos_adjunto_1
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828926.png" alt="archivo" width="30" />
-                            Archivos_adjunto_2
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="table-card">
                 <h4>Comentarios</h4>
                 <table class="table-simple">
                     <tr><th>Título</th><th></th></tr>
-                    <tr>
-                        <td>El servidor es viejo</td>
-                        <td><a href="#">Ver</a></td>
-                    </tr>
-                    <tr>
-                        <td>Falta limpieza</td>
-                        <td><a href="#">Ver</a></td>
-                    </tr>
+                    @if (Model.comentarios != null && Model.comentarios.Any())
+                    {
+                        foreach (var comentario in Model.comentarios)
+                        {
+                            <tr>
+                                <td>@comentario.titulo</td>
+                                
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="2">Sin comentarios</td></tr>
+                    }
                 </table>
             </div>
+
             <div class="table-card">
                 <h4>Tareas</h4>
                 <table class="table-simple">
                     <tr><th>Título</th><th></th></tr>
-                    <tr>
-                        <td>Limpiar servidor</td>
-                        <td><a href="#">Ver</a></td>
-                    </tr>
+                    @if (Model.tareas != null && Model.tareas.Any())
+                    {
+                        foreach (var tarea in Model.tareas)
+                        {
+                            <tr>
+                                <td>@tarea.titulo</td>
+                                
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="2">Sin tareas asignadas</td></tr>
+                    }
                 </table>
             </div>
         </div>
+        @if (ViewBag.Estado == "Pendiente")
+        {
+            <form method="post" asp-action="IniciarTrabajo" asp-controller="Tecnico">
+                <input type="hidden" name="id" value="@Model.id" />
+                <button type="submit" class="btn-iniciar">Iniciar Trabajo</button>
+            </form>
+        }
+        @if (ViewBag.Estado == "En progreso")
+        {
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="@Url.Action("AgregarComentario", "Tecnico", new { id = Model.id })" class="btn-comentario">Agregar Comentario</a>
 
-        <button class="btn-iniciar">Iniciar Trabajo</button>
+                <form method="post" asp-action="FinalizarTrabajo" asp-controller="Tecnico" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.id" />
+                    <button type="submit" class="btn-finalizar">Finalizar Trabajo</button>
+                </form>
+            </div>
+
+        }
+
+
     </div>
 </body>
 </html>
