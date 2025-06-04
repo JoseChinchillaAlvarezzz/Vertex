@@ -38,7 +38,7 @@ namespace Vertex.Controllers
                 return RedirectToAction("Login");
             }
 
-            // Buscar en clientes
+           
             var cliente = await _context.clientes
                 .FirstOrDefaultAsync(c => c.email == email && c.contrasenia == password);
 

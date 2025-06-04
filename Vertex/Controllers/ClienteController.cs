@@ -46,12 +46,12 @@ namespace Vertex.Controllers
 
         public IActionResult Crear()
         {
-            // Validar sesión activa
+            
             int? clienteId = HttpContext.Session.GetInt32("clienteId");
             if (clienteId == null)
                 return RedirectToAction("Login", "Login");
 
-            // Obtener datos del cliente actual
+            
             var cliente = _context.clientes.Find(clienteId.Value);
 
             ViewBag.Nombre = cliente.nombre;
@@ -83,8 +83,8 @@ namespace Vertex.Controllers
 
             ticket.fechacreacion = DateTime.Now;
             ticket.cliente_id = clienteId.Value;
-            ticket.estado_ticket_id = 1; // "Pendiente"
-            ticket.usuario_id = 1; // Técnico provisional
+            ticket.estado_ticket_id = 1; 
+            ticket.usuario_id = 1; 
 
             _context.tickets.Add(ticket);
             _context.SaveChanges();
@@ -92,6 +92,18 @@ namespace Vertex.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Detalle(int id)
+        {
+            var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
+            if (ticket == null) return NotFound();
+
+            // Para mostrar texto legible en vez de IDs
+            ViewBag.Categoria = _context.categorias.Find(ticket.categoria_id)?.categoria ?? "Desconocida";
+            ViewBag.Prioridad = _context.prioridades.Find(ticket.prioridad_id)?.prioridad ?? "Desconocida";
+            ViewBag.Estado = _context.estados_tickets.Find(ticket.estado_ticket_id)?.estado ?? "Desconocido";
+
+            return View(ticket);
+        }
 
 
 
