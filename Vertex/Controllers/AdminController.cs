@@ -47,5 +47,56 @@ namespace Vertex.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Asignar(int idTicket) 
+        {
+            var tecnicos = (from u in _context.usuarios
+                            where u.rol_id == 2
+                            select new
+                            {
+                                id = u.id,
+                                nombre = u.nombre + " " + u.apellido
+                            }).ToList();
+
+            var prioridades = (from p in _context.prioridades
+                               select new
+                               {
+                                   id = p.id,
+                                   prioridad = p.prioridad
+                               }).ToList();
+
+            var detalleTicket = (from t in _context.tickets
+                                 join cl in _context.clientes on t.cliente_id equals cl.id
+                                 join ca in _context.categorias on t.categoria_id equals ca.id
+                                 join p in _context.prioridades on t.prioridad_id equals p.id
+                                 where t.id == idTicket
+                                 select new AsignarTicketViewModel
+                                 {
+                                     id = t.id,
+                                     nombre = cl.nombre,
+                                     apellido = cl.apellido,
+                                     telefono = cl.telefono,
+                                     email = cl.email,
+                                     descripcion = t.descripcion,
+                                     aplicacion = t.aplicacion,
+                                     categoria = ca.categoria,
+                                     prioridad = p.prioridad
+                                 }).FirstOrDefault();
+
+            ViewData["Tecnicos"] = new SelectList(tecnicos, "id", "nombre");
+            ViewData["Prioridades"] = new SelectList(prioridades, "id", "prioridad");
+            ViewData["detalleTicket"] = detalleTicket;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Asignar() 
+        {
+            
+
+            return View();
+        }
+
     }
 }
