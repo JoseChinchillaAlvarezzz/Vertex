@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Vertex.Models;
 
 namespace Vertex.Controllers
@@ -41,5 +42,53 @@ namespace Vertex.Controllers
                 return View(listaTickets);
             
         }
+
+        public IActionResult Crear()
+        {
+            var clienteId = HttpContext.Session.GetInt32("clienteId");
+            var nombre = HttpContext.Session.GetString("nombre");
+            var apellido = HttpContext.Session.GetString("apellido");
+            var telefono = HttpContext.Session.GetString("telefono");
+            var email = HttpContext.Session.GetString("email");
+
+            ViewBag.Nombre = nombre;
+            ViewBag.Apellido = apellido;
+            ViewBag.Telefono = telefono;
+            ViewBag.Email = email;
+
+            ViewBag.Categorias = new SelectList(_context.categorias.ToList(), "id", "categoria");
+            ViewBag.Prioridades = new SelectList(_context.prioridades.ToList(), "id", "prioridad");
+
+            return View(new tickets());
+        }
+
+
+        [HttpPost]
+        public IActionResult Crear(tickets ticket)
+        {
+            ViewBag.Categorias = new SelectList(_context.categorias.ToList(), "id", "categoria");
+            ViewBag.Prioridades = new SelectList(_context.prioridades.ToList(), "id", "prioridad");
+
+            if (!ModelState.IsValid)
+                return View(ticket);
+
+            int? clienteId = HttpContext.Session.GetInt32("clienteId");
+            if (clienteId == null)
+                return RedirectToAction("Login", "Login");
+
+            ticket.fechacreacion = DateTime.Now;
+            ticket.cliente_id = clienteId.Value;
+            ticket.estado_ticket_id = 1;
+            ticket.usuario_id = 1; 
+
+            _context.tickets.Add(ticket);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+
+
     }
 }
