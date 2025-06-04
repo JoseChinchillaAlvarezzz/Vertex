@@ -26,14 +26,14 @@ namespace Vertex.Controllers
 
                 if (usuarioId != null)
                 {
-                    // Tickets del técnico
+                    
                     listaTickets = _context.tickets
                         .Where(t => t.usuario_id == usuarioId)
                         .ToList();
                 }
                 else if (clienteId != null)
                 {
-                    // Tickets del cliente
+                    
                     listaTickets = _context.tickets
                         .Where(t => t.cliente_id == clienteId)
                         .ToList();
@@ -45,47 +45,53 @@ namespace Vertex.Controllers
 
         public IActionResult Crear()
         {
-            var clienteId = HttpContext.Session.GetInt32("clienteId");
-            var nombre = HttpContext.Session.GetString("nombre");
-            var apellido = HttpContext.Session.GetString("apellido");
-            var telefono = HttpContext.Session.GetString("telefono");
-            var email = HttpContext.Session.GetString("email");
+            // Validar sesión activa
+            int? clienteId = HttpContext.Session.GetInt32("clienteId");
+            if (clienteId == null)
+                return RedirectToAction("Login", "Login");
 
-            ViewBag.Nombre = nombre;
-            ViewBag.Apellido = apellido;
-            ViewBag.Telefono = telefono;
-            ViewBag.Email = email;
+            // Obtener datos del cliente actual
+            var cliente = _context.clientes.Find(clienteId.Value);
+
+            ViewBag.Nombre = cliente.nombre;
+            ViewBag.Apellido = cliente.apellido;
+            ViewBag.Telefono = cliente.telefono;
+            ViewBag.Correo = cliente.email;
 
             ViewBag.Categorias = new SelectList(_context.categorias.ToList(), "id", "categoria");
             ViewBag.Prioridades = new SelectList(_context.prioridades.ToList(), "id", "prioridad");
 
-            return View(new tickets());
+            return View();
         }
+
 
 
         [HttpPost]
         public IActionResult Crear(tickets ticket)
         {
-            ViewBag.Categorias = new SelectList(_context.categorias.ToList(), "id", "categoria");
-            ViewBag.Prioridades = new SelectList(_context.prioridades.ToList(), "id", "prioridad");
-
-            if (!ModelState.IsValid)
-                return View(ticket);
-
             int? clienteId = HttpContext.Session.GetInt32("clienteId");
             if (clienteId == null)
-                return RedirectToAction("Login", "Login");
+                return RedirectToAction("Index", "Login");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = new SelectList(_context.categorias.ToList(), "id", "categoria");
+                ViewBag.Prioridades = new SelectList(_context.prioridades.ToList(), "id", "prioridad");
+                return View(ticket);
+            }
 
             ticket.fechacreacion = DateTime.Now;
             ticket.cliente_id = clienteId.Value;
-            ticket.estado_ticket_id = 1;
-            ticket.usuario_id = 1; 
+            ticket.estado_ticket_id = 1; // "Pendiente"
+            ticket.usuario_id = 1; // Técnico provisional
 
             _context.tickets.Add(ticket);
             _context.SaveChanges();
 
             return RedirectToAction("Index");
         }
+
+
 
 
 

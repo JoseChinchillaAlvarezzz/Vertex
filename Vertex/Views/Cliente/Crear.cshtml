@@ -1,132 +1,73 @@
 ﻿@model Vertex.Models.tickets
 @{
+    ViewBag.Title = "Crear Ticket";
     Layout = null;
-    ViewBag.Title = "Crear nuevo ticket";
+    var nombre = ViewBag.Nombre as string;
+    var apellido = ViewBag.Apellido as string;
+    var telefono = ViewBag.Telefono as string;
+    var correo = ViewBag.Correo as string;
 }
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="utf-8" />
-    <title>@ViewBag.Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crear Ticket</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            background-color: #a9cee5;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .form-card {
-            background-color: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 900px;
-            margin: 50px auto;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            position: relative;
-        }
-
-        .form-title {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .iconos-top {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-
-            .iconos-top img {
-                width: 30px;
-                margin-left: 15px;
-                cursor: pointer;
-            }
-
-        .btn-submit {
-            background-color: black;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-    </style>
 </head>
-<body>
-
-    <div class="form-card">
-        <div class="iconos-top">
-            <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
-                <img src="~/images/home_icono.png" alt="Inicio" />
-            </a>
-            <a href="javascript:history.back()" title="Regresar">
-                <img src="~/images/regres_icono.png" alt="Regresar" />
-            </a>
-        </div>
-
-        <div class="form-title">Formulario de reporte de problemas</div>
+<body style="background-color: #e6f0fa; padding: 30px; font-family: 'Segoe UI', sans-serif;">
+    <div class="container">
+        <h2 class="mb-4 text-center">Crear Nuevo Ticket</h2>
 
         @using (Html.BeginForm("Crear", "Cliente", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Nombre</label>
-                    <input class="form-control" value="@ViewBag.Nombre" readonly />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Apellido</label>
-                    <input class="form-control" value="@ViewBag.Apellido" readonly />
-                </div>
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" value="@nombre" readonly />
             </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Teléfono</label>
-                    <input class="form-control" value="@ViewBag.Telefono" readonly />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Correo electrónico</label>
-                    <input class="form-control" value="@ViewBag.Email" readonly />
-                </div>
+            <div class="mb-3">
+                <label class="form-label">Apellido</label>
+                <input type="text" class="form-control" value="@apellido" readonly />
             </div>
-
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    @Html.LabelFor(m => m.categoria_id, "Categoría", htmlAttributes: new { @class = "form-label" })
-                    @Html.DropDownListFor(m => m.categoria_id, ViewBag.Categorias as SelectList, "-- Selecciona --", new { @class = "form-select" })
-                    @Html.ValidationMessageFor(m => m.categoria_id, "", new { @class = "text-danger" })
-                </div>
-                <div class="col-md-6">
-                    @Html.LabelFor(m => m.prioridad_id, "Prioridad", htmlAttributes: new { @class = "form-label" })
-                    @Html.DropDownListFor(m => m.prioridad_id, ViewBag.Prioridades as SelectList, "-- Selecciona --", new { @class = "form-select" })
-                    @Html.ValidationMessageFor(m => m.prioridad_id, "", new { @class = "text-danger" })
-                </div>
+            <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="text" class="form-control" value="@telefono" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Correo</label>
+                <input type="email" class="form-control" value="@correo" readonly />
             </div>
 
             <div class="mb-3">
-                @Html.LabelFor(m => m.aplicacion, "Aplicación", htmlAttributes: new { @class = "form-label" })
-                @Html.TextBoxFor(m => m.aplicacion, new { @class = "form-control", placeholder = "Ej: Outlook, SAP, Sistema POS..." })
-                @Html.ValidationMessageFor(m => m.aplicacion, "", new { @class = "text-danger" })
+                <label class="form-label">Título</label>
+                @Html.TextBoxFor(m => m.titulo, new { @class = "form-control", required = "required" })
             </div>
 
             <div class="mb-3">
-                @Html.LabelFor(m => m.descripcion, "Descripción", htmlAttributes: new { @class = "form-label" })
-                @Html.TextAreaFor(m => m.descripcion, new { @class = "form-control", rows = 4, placeholder = "Describe claramente el problema que estás experimentando" })
-                @Html.ValidationMessageFor(m => m.descripcion, "", new { @class = "text-danger" })
+                <label class="form-label">Aplicación</label>
+                @Html.TextBoxFor(m => m.aplicacion, new { @class = "form-control" })
             </div>
 
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-submit">Generar Ticket</button>
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                @Html.TextAreaFor(m => m.descripcion, new { @class = "form-control", rows = "4", required = "required" })
             </div>
+
+            <div class="mb-3">
+                <label class="form-label">Categoría</label>
+                @Html.DropDownListFor(m => m.categoria_id, ViewBag.Categorias as SelectList, "Seleccione", new { @class = "form-select", required = "required" })
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Prioridad</label>
+                @Html.DropDownListFor(m => m.prioridad_id, ViewBag.Prioridades as SelectList, "Seleccione", new { @class = "form-select", required = "required" })
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar Ticket</button>
+            <a href="@Url.Action("Index", "Cliente")" class="btn btn-secondary">Cancelar</a>
         }
     </div>
-
 </body>
 </html>

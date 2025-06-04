@@ -46,6 +46,9 @@ namespace Vertex.Controllers
             {
                 HttpContext.Session.SetInt32("clienteId", cliente.id);
                 HttpContext.Session.SetString("nombre", cliente.nombre);
+                HttpContext.Session.SetString("apellido", cliente.apellido);
+                HttpContext.Session.SetString("telefono", cliente.telefono);
+                HttpContext.Session.SetString("email", cliente.email);
                 HttpContext.Session.SetString("rol", "Cliente");
 
                 return RedirectToAction("Index", "Cliente");
