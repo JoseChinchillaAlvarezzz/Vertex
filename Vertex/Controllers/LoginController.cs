@@ -19,7 +19,7 @@ namespace Vertex.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // Buscar en usuarios (Administrador o Técnico)
+            
             var usuario = await _context.usuarios
                 .FirstOrDefaultAsync(u => u.email == email && u.contrasenia == password);
 
@@ -33,7 +33,7 @@ namespace Vertex.Controllers
                     return RedirectToAction("Index", "Admin");
 
                 if (usuario.rol_id == 2) // Técnico
-                    return RedirectToAction("Index", "Cliente");
+                    return RedirectToAction("Index", "Tecnico");
 
                 return RedirectToAction("Login");
             }
