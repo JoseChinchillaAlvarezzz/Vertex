@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Vertex.Models;
 using Microsoft.EntityFrameworkCore;
+using Vertex.Models;
+using System.Linq;
 
 namespace Vertex.Controllers
 {
@@ -15,6 +17,10 @@ namespace Vertex.Controllers
 
         public IActionResult Index()
         {
+            return View();
+        }
+
+        public IActionResult Tickets()
             var nombreUsuario = HttpContext.Session.GetString("nombre");
             ViewBag.NombreUsuario = nombreUsuario;
 
@@ -67,6 +73,9 @@ namespace Vertex.Controllers
 
         public IActionResult Detalle(int id)
         {
+            // Trae todos los tickets, puedes filtrar por técnico si lo deseas
+            var listadoTickets = _context.tickets.ToList();
+            return View(listadoTickets);
             // 1. Buscar el ticket
             var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
             if (ticket == null)
