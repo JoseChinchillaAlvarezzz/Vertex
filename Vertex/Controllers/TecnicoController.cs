@@ -93,6 +93,41 @@ namespace Vertex.Controllers
             return RedirectToAction("ver_detalle", new { id = id });
         }
 
+        // GET: formulario de comentario
+        [HttpGet]
+        public IActionResult AgregarComentario(int ticketId)
+        {
+            var ticket = _context.tickets.FirstOrDefault(t => t.id == ticketId);
+            if (ticket == null)
+                return NotFound();
+
+            ViewBag.TicketId = ticketId;
+            return View();
+        }
+
+
+        // POST: guardar comentario
+        [HttpPost]
+        public IActionResult AgregarComentario(int ticketId, string titulo, string comentario)
+        {
+            int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
+            var nuevoComentario = new comentarios
+            {
+                titulo = titulo,
+                comentario = comentario,
+                ticket_id = ticketId,
+                usuario_id = tecnicoId.Value // <- solución
+            };
+
+            _context.comentarios.Add(nuevoComentario);
+            _context.SaveChanges();
+
+            return RedirectToAction("ver_detalle", new { id = ticketId });
+        }
+
 
     }
 }

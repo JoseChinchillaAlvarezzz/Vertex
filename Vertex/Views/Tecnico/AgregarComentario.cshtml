@@ -1,0 +1,87 @@
+﻿@{
+    Layout = null;
+    var ticketId = ViewBag.TicketId;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Agregar Comentario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'Quicksand', Arial, sans-serif;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 14px;
+            padding: 32px 40px;
+            box-shadow: 0 2px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+            margin-top: 18px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+        }
+
+        .btn-guardar {
+            display: block;
+            margin: 30px auto 0 auto;
+            background: #f7e87e;
+            color: #232323;
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: filter 0.13s;
+        }
+
+            .btn-guardar:active {
+                filter: brightness(0.95);
+            }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Agregar Comentario al Ticket #@ticketId</h2>
+
+        <form method="post" asp-action="AgregarComentario" asp-controller="Tecnico">
+            <input type="hidden" name="ticketId" value="@ticketId" />
+
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" required />
+
+            <label for="comentario">Comentario</label>
+            <textarea id="comentario" name="comentario" rows="4" required></textarea>
+
+            <button type="submit" class="btn-guardar">Guardar Comentario</button>
+        </form>
+    </div>
+</body>
+</html>
