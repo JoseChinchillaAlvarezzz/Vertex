@@ -81,11 +81,12 @@ namespace Vertex.Controllers
                                      descripcion = t.descripcion,
                                      aplicacion = t.aplicacion,
                                      categoria = ca.categoria,
-                                     prioridad = p.prioridad
+                                     prioridad = p.prioridad,
+                                     idPrioridad = t.prioridad_id 
                                  }).FirstOrDefault();
 
             ViewData["Tecnicos"] = new SelectList(tecnicos, "id", "nombre");
-            ViewData["Prioridades"] = new SelectList(prioridades, "id", "prioridad");
+            ViewData["Prioridades"] = new SelectList(prioridades, "id", "prioridad", detalleTicket.idPrioridad);
             ViewData["detalleTicket"] = detalleTicket;
             return View();
         }
@@ -120,6 +121,8 @@ namespace Vertex.Controllers
 
             return RedirectToAction("Index", "Admin", new { id = idTicket });
         }
+
+
 
     }
 }

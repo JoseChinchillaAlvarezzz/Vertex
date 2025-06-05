@@ -13,6 +13,7 @@ namespace Vertex.Models
         public string aplicacion { get; set; }
         public string categoria { get; set; }
         public string prioridad { get; set; }
+        public int? idPrioridad { get; set; }
 
         public List<SelectListItem> Tecnicos { get; set; }
         public List<SelectListItem> Prioridades { get; set; }
