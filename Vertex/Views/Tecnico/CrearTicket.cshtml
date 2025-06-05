@@ -1,0 +1,112 @@
+﻿@model Vertex.Models.tickets
+@{
+    ViewBag.Title = "Crear nuevo ticket";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Crear Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        .form-container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+            max-width: 880px;
+            margin: 38px auto;
+            padding: 40px 44px 32px 44px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.4rem;
+            margin-bottom: 26px;
+        }
+
+        label {
+            font-weight: 700;
+            margin-top: 18px;
+        }
+
+        input, select, textarea {
+            display: block;
+            width: 100%;
+            margin: 7px 0 14px 0;
+            padding: 10px 12px;
+            border: 1.5px solid #222;
+            border-radius: 13px;
+            font-size: 1.13rem;
+        }
+
+        textarea {
+            min-height: 80px;
+        }
+
+        .btn-enviar {
+            background: #fff163;
+            font-size: 1.22rem;
+            border-radius: 18px;
+            border: none;
+            color: #111;
+            font-weight: 700;
+            margin: 18px auto 0 auto;
+            display: block;
+            width: 300px;
+            padding: 16px 0;
+            cursor: pointer;
+        }
+
+            .btn-enviar:hover {
+                background: #ffe370;
+            }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Formulario de reporte de técnicos</h2>
+        <form asp-action="CrearTicket" asp-controller="Tecnico" method="post">
+            <label>Nombre</label>
+            <input type="text" name="cliente.nombre" value="" required />
+
+            <label>Apellido</label>
+            <input type="text" name="cliente.apellido" value="" required />
+
+            <label>Número de teléfono</label>
+            <input type="text" name="cliente.telefono" value="" required />
+
+            <label>Correo Electrónico</label>
+            <input type="email" name="cliente.correo" value="" required />
+
+            <div style="display: flex; gap: 18px;">
+                <div style="flex:1;">
+                    <label>Categoría</label>
+                    @Html.DropDownListFor(m => m.categoria_id, (List<SelectListItem>)ViewBag.Categorias, "-seleccione una categoria-", new { @required = "required" })
+                </div>
+                <div style="flex:1;">
+                    <label>Prioridad</label>
+                    @Html.DropDownListFor(m => m.prioridad_id, (List<SelectListItem>)ViewBag.Prioridades, "-seleccione una prioridad-", new { @required = "required" })
+                </div>
+                <div style="flex:1;">
+                    <label>Nombre de la Aplicación afectada</label>
+                    <input type="text" name="aplicacion" value="" required />
+                </div>
+            </div>
+
+            <label>Descripción del problema</label>
+            <textarea name="descripcion" required></textarea>
+
+            <!-- Puedes agregar aquí lógica para subir archivos si lo necesitas -->
+
+            <button type="submit" class="btn-enviar">Generar Ticket</button>
+        </form>
+    </div>
+</body>
+</html>
