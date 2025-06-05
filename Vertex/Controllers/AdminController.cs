@@ -122,7 +122,64 @@ namespace Vertex.Controllers
             return RedirectToAction("Index", "Admin", new { id = idTicket });
         }
 
+        [HttpGet]
+        public IActionResult Detalle(int idTicket)
+        {
+            var detalleTicket = (from t in _context.tickets
+                                 join c in _context.clientes on t.cliente_id equals c.id
+                                 join p in _context.prioridades on t.prioridad_id equals p.id
+                                 join ca in _context.categorias on t.categoria_id equals ca.id
+                                 join a in _context.asignaciones on t.id equals a.ticket_id
+                                 join u in _context.usuarios on a.usuario_id equals u.id
+                                 where t.id == idTicket
+                                 select new DetalleTicketViewModel
+                                 {
+                                     id = t.id,
+                                     nombre = c.nombre,
+                                     apellido = c.apellido,
+                                     telefono = c.telefono, 
+                                     correo = c.email,
+                                     categoria = ca.categoria,
+                                     prioridad = p.prioridad,
+                                     aplicacion = t.aplicacion,
+                                     tecnico = u.nombre + " " + u.apellido,
+                                     descripcion = t.descripcion
+                                 }).FirstOrDefault();
 
+            var comentarios = (from c in _context.comentarios
+                               where c.ticket_id == idTicket 
+                               select new ComentarioViewModel
+                               {
+                                   id = c.id,
+                                   titulo = c.titulo
+                               }).ToList();
+
+            var tareas = (from t in _context.tareas
+                          where t.ticket_id == idTicket
+                          select new TareaViewModel
+                          {
+                              id = t.id,
+                              titulo = t.titulo
+                          }).ToList();
+
+            Console.WriteLine("Ticket: " + idTicket.ToString() + " Tareas: " + tareas.Count + " Comentarios: " + comentarios.Count);
+
+            if (comentarios.Any(c => c == null))
+            {
+                Console.WriteLine("Hay comentarios nulos en la lista");
+            }
+
+            if (tareas.Any(t => t == null))
+            {
+                Console.WriteLine("Hay tareas nulas en la lista");
+            }
+
+            ViewData["detalleTicket"] = detalleTicket;
+            ViewData["Comentarios"] = comentarios;
+            ViewData["Tareas"] = tareas;
+
+            return View();
+        }
 
     }
 }

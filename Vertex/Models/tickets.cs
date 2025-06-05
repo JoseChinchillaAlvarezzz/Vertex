@@ -18,7 +18,7 @@ namespace Vertex.Models
         public int estado_ticket_id { get; set; }
         public int? prioridad_id { get; set; }
 
-        // ✅ Relaciones de navegación
+        //  Relaciones de navegación
         [ForeignKey("cliente_id")]
         public virtual clientes cliente { get; set; }
 

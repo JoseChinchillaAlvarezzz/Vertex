@@ -193,7 +193,11 @@
                             <div class="ticket-desc">Prioridad: @ticket.prioridad</div>
                         </div>
                         <div class="d-flex">
-                            <button class="btn-detalle justify-content-center">Ver Detalle</button>
+                            @using (Html.BeginForm("Detalle", "Admin", FormMethod.Get))
+                            {
+                                <input type="hidden" name="idTicket" value="@ticket.id" />
+                                <button class="btn-detalle justify-content-center">Ver Detalle</button>
+                            }
                         </div>
                     </div>
                 }
