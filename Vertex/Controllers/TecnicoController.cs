@@ -98,8 +98,7 @@ namespace Vertex.Controllers
         public IActionResult AgregarComentario(int ticketId)
         {
             var ticket = _context.tickets.FirstOrDefault(t => t.id == ticketId);
-            if (ticket == null)
-                return NotFound();
+            if (ticket == null) return NotFound();
 
             ViewBag.TicketId = ticketId;
             return View();
@@ -125,6 +124,7 @@ namespace Vertex.Controllers
 
             return RedirectToAction("ver_detalle", new { id = ticketId });
         }
+
         [HttpPost]
         public IActionResult Historial(string aplicacion, DateTime? fechaInicio, DateTime? fechaFin)
         {
@@ -140,7 +140,7 @@ namespace Vertex.Controllers
                       id => id,
                       t => t.id,
                       (id, t) => t)
-                .Where(t => t.estado_ticket_id == 4) // "Resuelto"
+                .Where(t => t.estado_ticket_id == 4) 
                 .Include(t => t.prioridad)
                 .AsQueryable();
 
@@ -215,7 +215,7 @@ namespace Vertex.Controllers
 
             if (ModelState.IsValid)
             {
-                ticket.usuario_id = tecnicoId.Value;
+                ticket.usuario_id = new Random().Next(1, 3);
                 ticket.cliente_id = 1;
                 ticket.fechacreacion = DateTime.Now;
                 ticket.estado_ticket_id = 1;

@@ -124,6 +124,15 @@
     </style>
 </head>
 <body>
+    <!-- Botones de Logout y Return -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 22px 38px 0 38px;">
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" style="width:48px; cursor:pointer;" />
+        </a>
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Cerrar sesión" style="width:48px; cursor:pointer;" />
+        </a>
+    </div>
     <div class="titulo">Bienvenido @nombreUsuario</div>
     <div class="subtitulo">Historial de Ticket</div>
 

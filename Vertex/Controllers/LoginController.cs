@@ -26,6 +26,7 @@ namespace Vertex.Controllers
                 HttpContext.Session.SetInt32("usuarioId", usuario.id);
                 HttpContext.Session.SetString("nombre", usuario.nombre);
                 HttpContext.Session.SetInt32("rolId", usuario.rol_id);
+                HttpContext.Session.SetString("email", usuario.email);
 
                 if (usuario.rol_id == 1) // Administrador
                     return RedirectToAction("Index", "Admin");
