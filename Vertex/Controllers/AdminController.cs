@@ -153,6 +153,11 @@ namespace Vertex.Controllers
 
             return View();
         }
+        public IActionResult listausuarios()
+        {
+            var listaUsuarios = _context.usuarios.ToList();
+            return View(listaUsuarios);
+        }
 
         [HttpPost]
         public IActionResult CreaUsu(usuarios usuario)
