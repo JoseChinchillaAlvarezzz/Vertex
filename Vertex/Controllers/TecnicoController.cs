@@ -98,8 +98,7 @@ namespace Vertex.Controllers
         public IActionResult AgregarComentario(int ticketId)
         {
             var ticket = _context.tickets.FirstOrDefault(t => t.id == ticketId);
-            if (ticket == null)
-                return NotFound();
+            if (ticket == null) return NotFound();
 
             ViewBag.TicketId = ticketId;
             return View();
@@ -125,6 +124,7 @@ namespace Vertex.Controllers
 
             return RedirectToAction("ver_detalle", new { id = ticketId });
         }
+
         [HttpPost]
         public IActionResult Historial(string aplicacion, DateTime? fechaInicio, DateTime? fechaFin)
         {
