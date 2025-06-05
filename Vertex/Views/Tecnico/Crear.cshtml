@@ -1,0 +1,114 @@
+﻿@model Vertex.Models.tickets
+@{
+    ViewBag.Title = "Crear Ticket";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Crear Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+            padding: 50px;
+        }
+
+        form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1.5px solid #ccc;
+            margin-top: 8px;
+        }
+
+        .btn-submit {
+            margin-top: 28px;
+            background: #f3d542;
+            color: #232323;
+            font-size: 1.1rem;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'DM Serif Display', serif;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mensaje-exito {
+            color: green;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <form asp-action="Crear" asp-controller="Tecnico" method="post">
+        @Html.ValidationSummary(true, "", new { @style = "color: red; font-weight: bold;" })
+
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="mensaje-exito">@TempData["Success"]</div>
+        }
+        @if (ViewBag.Errores != null)
+        {
+            <div style="color:red; font-weight:bold; margin-bottom:20px;">
+                <ul>
+                    @foreach (var error in ViewBag.Errores)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+
+
+        <h1>Crear Ticket</h1>
+
+        @Html.LabelFor(m => m.titulo)
+        @Html.TextBoxFor(m => m.titulo, new { @required = "required" })
+
+        @Html.LabelFor(m => m.descripcion)
+        @Html.TextAreaFor(m => m.descripcion, new { @required = "required" })
+
+        @Html.LabelFor(m => m.aplicacion)
+        @Html.TextBoxFor(m => m.aplicacion, new { @required = "required" })
+
+        @Html.LabelFor(m => m.categoria_id)
+        @Html.DropDownListFor(m => m.categoria_id, (List<SelectListItem>)ViewBag.Categorias, "-seleccione-", new { @required = "required" })
+
+        @Html.LabelFor(m => m.prioridad_id)
+        @Html.DropDownListFor(m => m.prioridad_id, (List<SelectListItem>)ViewBag.Prioridades, "-seleccione-", new { @required = "required" })
+
+        <button type="submit" class="btn-submit">Generar Ticket</button>
+    </form>
+</body>
+</html>

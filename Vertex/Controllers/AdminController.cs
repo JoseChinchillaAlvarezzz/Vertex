@@ -140,6 +140,39 @@ namespace Vertex.Controllers
 
             return RedirectToAction("Index", "Admin");
         }
+        // ... (tus otros métodos) ...
+
+        [HttpGet]
+        public IActionResult CreaUsu()
+        {
+            // Llenar el combo de roles desde la base de datos
+            var roles = _context.roles
+                .Select(r => new { r.id, r.rol })
+                .ToList();
+            ViewBag.Roles = new SelectList(roles, "id", "rol");
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreaUsu(usuarios usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.usuarios.Add(usuario);
+                _context.SaveChanges();
+                // Redirige donde prefieras después de guardar, por ejemplo al listado
+                return RedirectToAction("Index", "Admin");
+            }
+
+            // Si falla, vuelve a llenar los roles para el combo
+            var roles = _context.roles
+                .Select(r => new { r.id, r.rol })
+                .ToList();
+            ViewBag.Roles = new SelectList(roles, "id", "rol");
+
+            return View(usuario);
+        }
 
 
 
