@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Vertex.Models;
 using Vertex.Services;
@@ -10,7 +11,7 @@ namespace Vertex.Controllers
     {
         private readonly ticketsContext _context;
         private readonly IConfiguration _configuration;
-        public AdminController(ticketsContext context, IConfiguration configuration) 
+        public AdminController(ticketsContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -36,10 +37,10 @@ namespace Vertex.Controllers
 
             var listadoTicketsActivos = (from t in _context.tickets
                                          join p in _context.prioridades on t.prioridad_id equals p.id
-                                         where (t.estado_ticket_id == 1 || t.estado_ticket_id == 2 || t.estado_ticket_id ==3)
+                                         where (t.estado_ticket_id == 1 || t.estado_ticket_id == 2 || t.estado_ticket_id == 3)
                                          && t.usuario_id == adminId
                                          && _context.asignaciones.Any(a => a.ticket_id == t.id)
-                                         select new 
+                                         select new
                                          {
                                              id = t.id,
                                              titulo = t.titulo,
@@ -53,7 +54,7 @@ namespace Vertex.Controllers
         }
 
         [HttpGet]
-        public IActionResult Asignar(int idTicket) 
+        public IActionResult Asignar(int idTicket)
         {
             var tecnicos = (from u in _context.usuarios
                             where u.rol_id == 2
@@ -86,7 +87,7 @@ namespace Vertex.Controllers
                                      aplicacion = t.aplicacion,
                                      categoria = ca.categoria,
                                      prioridad = p.prioridad,
-                                     idPrioridad = t.prioridad_id 
+                                     idPrioridad = t.prioridad_id
                                  }).FirstOrDefault();
 
             ViewData["Tecnicos"] = new SelectList(tecnicos, "id", "nombre");
@@ -257,7 +258,7 @@ namespace Vertex.Controllers
                                      id = t.id,
                                      nombre = c.nombre,
                                      apellido = c.apellido,
-                                     telefono = c.telefono, 
+                                     telefono = c.telefono,
                                      correo = c.email,
                                      categoria = ca.categoria,
                                      prioridad = p.prioridad,
@@ -267,7 +268,7 @@ namespace Vertex.Controllers
                                  }).FirstOrDefault();
 
             var comentarios = (from c in _context.comentarios
-                               where c.ticket_id == idTicket 
+                               where c.ticket_id == idTicket
                                select new ComentarioViewModel
                                {
                                    id = c.id,
@@ -295,11 +296,57 @@ namespace Vertex.Controllers
 
             return View(viewModel);
         }
+        public IActionResult DetalleTic(int id)
+        {
 
+            {
+                var ticket = _context.tickets
+                    .Include(t => t.cliente)
+                    .Include(t => t.categoria)
+                    .Include(t => t.prioridad)
+                    .FirstOrDefault(t => t.id == id);
+
+                if (ticket == null)
+                    return NotFound();
+
+                // Tareas y comentarios asociados
+                ticket.tareas = _context.tareas.Where(t => t.ticket_id == id).ToList();
+                ticket.comentarios = _context.comentarios.Where(c => c.ticket_id == id).ToList();
+
+                // Obtener técnicos (para el select de técnico encargado)
+                var tecnicos = _context.usuarios
+                    .Where(u => u.rol_id == 2)
+                    .Select(u => new { id = u.id, Nombre = u.nombre + " " + u.apellido })
+                    .ToList();
+
+                // Técnico encargado (última asignación para este ticket)
+                int? tecnicoEncargadoId = _context.asignaciones
+                    .Where(a => a.ticket_id == id)
+                    .OrderByDescending(a => a.fechaasignacion)
+                    .Select(a => (int?)a.usuario_id)
+                    .FirstOrDefault();
+
+                ViewBag.Tecnicos = tecnicos;
+                ViewBag.TecnicoEncargadoId = tecnicoEncargadoId;
+
+                return View(ticket);
+
+
+            }
+        }
+        public IActionResult InfoTick()
+        {
+
+            // Supongamos que estado_ticket_id = 4 es "Completado"
+            var ticketsCompletados = _context.tickets
+                .Where(t => t.estado_ticket_id == 4)
+                .OrderByDescending(t => t.fechacreacion)
+                .ToList();
+
+            return View(ticketsCompletados);
+        }
 
 
 
     }
-
 }
-
