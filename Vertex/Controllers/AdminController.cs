@@ -376,5 +376,35 @@ namespace Vertex.Controllers
             return RedirectToAction("Index", "Admin", new { id = ticketId });
         }
 
+        [HttpGet]
+        public IActionResult AgregarTarea(int ticketId) 
+        {
+            var ticket = (from t in _context.tickets
+                          where t.id == ticketId
+                          select t).FirstOrDefault();
+
+            ViewData["ticket"] = ticket.id;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AgregarTarea(int ticketId, string titulo, string descripcion) 
+        {
+            var adminId = HttpContext.Session.GetInt32("usuarioId");
+
+            var nuevaTarea = new tareas
+            {
+                titulo = titulo,
+                descripcion = descripcion,
+                ticket_id = ticketId,
+                estado_tarea_id = 1
+            };
+
+            _context.tareas.Add(nuevaTarea);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Admin", new { id = ticketId });
+        }
+
     }
 }
