@@ -145,6 +145,9 @@
                 <div class="column">
                     <label class="form-label">Nombre de la Aplicacion afectada</label>
                     <input type="text" class="form-input" value="@ticket.aplicacion" readonly />
+
+                    <label class="form-label">Seleccione la nueva prioridad para el ticket</label>
+                    @Html.DropDownList("idPrioridad", ViewData["Prioridades"] as SelectList, "Reevaluacion de prioridad", new { @class = "form-control form-select" })
                 </div>
             </div>
             <div>
@@ -155,7 +158,8 @@
              <div class="asignar-row">
                 <div>
                     <label style="font-weight:bold; font-size:1.13rem; margin-right:14px;">Asigne un tecnico al ticket</label>
-                    @Html.DropDownList("tecnicos", ViewData["Tecnicos"] as SelectList, "Seleccione al tecnico para el ticket", new { @class = "form-control form-select" })
+                    @Html.DropDownList("idTecnico", ViewData["Tecnicos"] as SelectList, "Seleccione al tecnico para el ticket", new { @class = "form-control form-select" })
+                    <input type="hidden" name="idTicket" value="@ticket.id" />
                 </div>
                 <button type="submit" class="btn-enviar">Asignar Técnico</button>
              </div>
