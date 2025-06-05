@@ -115,55 +115,78 @@
         }
 
         }
+
+        .iconos-top {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+            .iconos-top img {
+                width: 30px;
+                margin-left: 10px;
+            }
     </style>
 </head>
 <body>
-    <div class="main-card">
-        <h1>Ticket #@ticket.id</h1>
-        <form method="post" action="@Url.Action("Asignar", "Admin")" onsubmit="return confirm('¿Estás seguro la asignacion y la nueva prioridad?');">
-            <div class="row-flex">
-                <div class="column">
-                    <label class="form-label">Nombre</label>
-                    <input type="text" class="form-input" value="@ticket.nombre" readonly />
+    <div class="iconos-top">
 
-                    <label class="form-label">Numero de telefono</label>
-                    <input type="text" class="form-input" value="@ticket.telefono" readonly />
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Inicio" />
+        </a>
 
-                    <label class="form-label">Categoria</label>
-                    <input type="text" class="form-input" value="@ticket.categoria" readonly />
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
+    <div class="container">
+        <div class="main-card">
+            <h1>Ticket #@ticket.id</h1>
+            <form method="post" action="@Url.Action("Asignar", "Admin")" onsubmit="return confirm('¿Estás seguro la asignacion y la nueva prioridad?');">
+                <div class="row-flex">
+                    <div class="column">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-input" value="@ticket.nombre" readonly />
+
+                        <label class="form-label">Numero de telefono</label>
+                        <input type="text" class="form-input" value="@ticket.telefono" readonly />
+
+                        <label class="form-label">Categoria</label>
+                        <input type="text" class="form-input" value="@ticket.categoria" readonly />
+                    </div>
+                    <div class="column">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" class="form-input" value="@ticket.apellido" readonly />
+
+                        <label class="form-label">Correo Electronico</label>
+                        <input type="text" class="form-input" value="@ticket.email" readonly />
+
+                        <label class="form-label">Prioridad</label>
+                        <input type="text" class="form-input" value="@ticket.prioridad" readonly />
+                    </div>
+                    <div class="column">
+                        <label class="form-label">Nombre de la Aplicacion afectada</label>
+                        <input type="text" class="form-input" value="@ticket.aplicacion" readonly />
+
+                        <label class="form-label">Seleccione la nueva prioridad para el ticket</label>
+                        @Html.DropDownList("idPrioridad", ViewData["Prioridades"] as SelectList, "Reevaluacion de prioridad", new { @class = "form-control form-select" })
+                    </div>
                 </div>
-                <div class="column">
-                    <label class="form-label">Apellido</label>
-                    <input type="text" class="form-input" value="@ticket.apellido" readonly />
-
-                    <label class="form-label">Correo Electronico</label>
-                    <input type="text" class="form-input" value="@ticket.email" readonly />
-
-                    <label class="form-label">Prioridad</label>
-                    <input type="text" class="form-input" value="@ticket.prioridad" readonly />
-                </div>
-                <div class="column">
-                    <label class="form-label">Nombre de la Aplicacion afectada</label>
-                    <input type="text" class="form-input" value="@ticket.aplicacion" readonly />
-
-                    <label class="form-label">Seleccione la nueva prioridad para el ticket</label>
-                    @Html.DropDownList("idPrioridad", ViewData["Prioridades"] as SelectList, "Reevaluacion de prioridad", new { @class = "form-control form-select" })
-                </div>
-            </div>
-            <div>
-                <label class="form-label">Descripcion del problema</label>
-                <textarea class="form-input" rows="3" readonly>@ticket.descripcion</textarea>
-            </div>
-
-             <div class="asignar-row">
                 <div>
-                    <label style="font-weight:bold; font-size:1.13rem; margin-right:14px;">Asigne un tecnico al ticket</label>
-                    @Html.DropDownList("idTecnico", ViewData["Tecnicos"] as SelectList, "Seleccione al tecnico para el ticket", new { @class = "form-control form-select" })
-                    <input type="hidden" name="idTicket" value="@ticket.id" />
+                    <label class="form-label">Descripcion del problema</label>
+                    <textarea class="form-input" rows="3" readonly>@ticket.descripcion</textarea>
                 </div>
-                <button type="submit" class="btn-enviar">Asignar Técnico</button>
-             </div>
-        </form>
+
+                <div class="asignar-row">
+                    <div>
+                        <label style="font-weight:bold; font-size:1.13rem; margin-right:14px;">Asigne un tecnico al ticket</label>
+                        @Html.DropDownList("idTecnico", ViewData["Tecnicos"] as SelectList, "Seleccione al tecnico para el ticket", new { @class = "form-control form-select" })
+                        <input type="hidden" name="idTicket" value="@ticket.id" />
+                    </div>
+                    <button type="submit" class="btn-enviar">Asignar Técnico</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>

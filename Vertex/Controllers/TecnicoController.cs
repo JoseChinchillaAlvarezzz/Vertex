@@ -140,7 +140,7 @@ namespace Vertex.Controllers
                       id => id,
                       t => t.id,
                       (id, t) => t)
-                .Where(t => t.estado_ticket_id == 4) // "Resuelto"
+                .Where(t => t.estado_ticket_id == 4) 
                 .Include(t => t.prioridad)
                 .AsQueryable();
 

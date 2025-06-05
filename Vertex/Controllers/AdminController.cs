@@ -161,11 +161,26 @@ namespace Vertex.Controllers
             {
                 _context.usuarios.Add(usuario);
                 _context.SaveChanges();
-                // Redirige donde prefieras después de guardar, por ejemplo al listado
+
+                // Enviar correo al nuevo usuario
+                string asunto = "Bienvenido a Vertex - Credenciales de acceso";
+                string mensaje = $@"
+            Hola <b>{usuario.nombre} {usuario.apellido}</b>,<br><br>
+            Tu cuenta ha sido creada con éxito en el sistema Vertex.<br><br>
+            <b>Correo:</b> {usuario.email}<br>
+            <b>Contraseña:</b> {usuario.contrasenia}<br>
+            <b>Rol:</b> {_context.roles.FirstOrDefault(r => r.id == usuario.rol_id)?.rol ?? "No especificado"}<br><br>
+            Puedes iniciar sesión y comenzar a gestionar tus tickets.<br><br>
+            <i>Equipo Vertex</i>
+        ";
+
+                correo enviarCorreo = new correo(_configuration);
+                enviarCorreo.enviar(usuario.email, asunto, mensaje);
+
                 return RedirectToAction("Index", "Admin");
             }
 
-            // Si falla, vuelve a llenar los roles para el combo
+            // Si falla la validación, volver a llenar los roles
             var roles = _context.roles
                 .Select(r => new { r.id, r.rol })
                 .ToList();
@@ -173,6 +188,7 @@ namespace Vertex.Controllers
 
             return View(usuario);
         }
+
 
 
 

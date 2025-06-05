@@ -43,7 +43,7 @@ namespace Vertex.Models
         [ForeignKey("prioridad_id")]
         public virtual prioridades? prioridad { get; set; }
 
-        // 🔥 MARCAR COMO [NotMapped] para evitar errores si no están mapeadas en DB
+        
         [NotMapped]
         public virtual ICollection<comentarios>? comentarios { get; set; }
 
