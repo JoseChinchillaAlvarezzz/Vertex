@@ -153,6 +153,11 @@ namespace Vertex.Controllers
 
             return View();
         }
+        public IActionResult listausuarios()
+        {
+            var listaUsuarios = _context.usuarios.ToList();
+            return View(listaUsuarios);
+        }
 
         [HttpPost]
         public IActionResult CreaUsu(usuarios usuario)
@@ -189,6 +194,31 @@ namespace Vertex.Controllers
             return View(usuario);
         }
 
+       
+
+        [HttpGet]
+        public IActionResult EdiUsu(int id)
+        {
+            var usuario = _context.usuarios.FirstOrDefault(u => u.id == id);
+            if (usuario == null) return NotFound();
+
+            // Llenar los roles para el combo
+            ViewBag.Roles = new SelectList(_context.roles.ToList(), "id", "rol", usuario.rol_id);
+            return View(usuario); // Renderiza EdiUsu.cshtml
+        }
+
+        [HttpPost]
+        public IActionResult EdiUsu(usuarios usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.usuarios.Update(usuario);
+                _context.SaveChanges();
+                return RedirectToAction("listausuarios"); // O donde prefieras
+            }
+            ViewBag.Roles = new SelectList(_context.roles.ToList(), "id", "rol", usuario.rol_id);
+            return View(usuario);
+        }
 
 
 
@@ -196,4 +226,6 @@ namespace Vertex.Controllers
 
 
     }
+
 }
+
