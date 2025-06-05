@@ -1,0 +1,169 @@
+﻿@model IEnumerable<Vertex.Models.tickets>
+
+@{
+    Layout = null;
+    var nombreUsuario = ViewBag.NombreUsuario as string ?? "Usuario";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Historial de Tickets</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 1.7rem;
+            margin-bottom: 36px;
+        }
+
+        .contenedor-principal {
+            display: flex;
+            justify-content: space-between;
+            padding: 40px 80px;
+        }
+
+        .panel-tickets {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .panel-filtros {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .ticket-card {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 16px 20px;
+            margin-bottom: 18px;
+        }
+
+        .ticket-titulo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .ticket-prioridad {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .btn-ver {
+            background: #f3d542;
+            color: #232323;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 10px 20px;
+            border: none;
+            font-family: 'DM Serif Display', serif;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            text-decoration: none;
+            transition: filter 0.1s;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+            .btn-ver:hover {
+                filter: brightness(1.05);
+            }
+
+        .filtro-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+            .filtro-box label {
+                font-size: 1.1rem;
+                font-weight: bold;
+            }
+
+            .filtro-box input {
+                padding: 10px 14px;
+                border-radius: 8px;
+                border: 1.5px solid #aaa;
+                font-size: 1rem;
+            }
+
+        .btn-buscar {
+            background: #f3d542;
+            border: none;
+            padding: 10px 24px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: fit-content;
+        }
+    </style>
+</head>
+<body>
+    <div class="titulo">Bienvenido @nombreUsuario</div>
+    <div class="subtitulo">Historial de Ticket</div>
+
+    <div class="contenedor-principal">
+        <!-- Lista de tickets -->
+        <div class="panel-tickets">
+            <h3>Tickets Terminados</h3>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var ticket in Model)
+                {
+                    <div class="ticket-card">
+                        <div class="ticket-titulo">Ticket #@ticket.id</div>
+                        <div class="ticket-prioridad">Prioridad: @ticket.prioridad?.prioridad</div>
+                        <div class="ticket-prioridad">Aplicación: @ticket.aplicacion</div>
+                        <div class="ticket-prioridad">Fecha: @ticket.fechacreacion.ToShortDateString()</div>
+                        <a class="btn-ver" href="@Url.Action("ver_detalle", "Tecnico", new { id = ticket.id })">Ver Detalles</a>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No hay tickets finalizados.</p>
+            }
+        </div>
+
+        <!-- Filtros -->
+        <div class="panel-filtros">
+            <form method="post" asp-action="Historial" asp-controller="Tecnico" class="filtro-box">
+                <label>Filtrar por aplicación</label>
+                <input type="text" name="aplicacion" placeholder="Ej: Outlook o PlatyPlus" value="@ViewBag.Aplicacion" />
+
+                <label>Filtrar por fecha</label>
+                <input type="date" name="fechaInicio" value="@ViewBag.FechaInicio" />
+                <input type="date" name="fechaFin" value="@ViewBag.FechaFin" />
+
+                <button type="submit" class="btn-buscar">Buscar</button>
+            </form>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+﻿@{
+    Layout = null;
+    var ticketId = ViewBag.TicketId;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Comentario</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .iconos-top {
+            position: absolute;
+            top: 32px;
+            right: 42px;
+            display: flex;
+            gap: 16px;
+            z-index: 100;
+        }
+
+            .iconos-top img {
+                width: 48px;
+                height: 48px;
+                cursor: pointer;
+                transition: filter 0.15s;
+            }
+
+                .iconos-top img:hover {
+                    filter: brightness(0.85);
+                }
+
+        .form-container {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 24px 0 rgba(140,140,140,0.11);
+            max-width: 680px;
+            margin: 98px auto 0 auto;
+            padding: 45px 38px 38px 38px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        h2 {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 22px;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        input[type="text"], textarea {
+            border: 1.5px solid #abd4eb;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1.1rem;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .btn-guardar {
+            margin: 0 auto;
+            margin-top: 30px;
+            background: #fff163;
+            color: #222;
+            font-size: 1.4rem;
+            font-family: 'DM Serif Display', serif;
+            font-weight: 600;
+            border-radius: 18px;
+            border: 2.2px solid #d9d269;
+            box-shadow: 0 2px 12px 0 rgba(180,180,120,0.10);
+            padding: 14px 46px;
+            cursor: pointer;
+            display: block;
+            transition: background 0.13s, box-shadow 0.13s;
+        }
+
+            .btn-guardar:active {
+                background: #fff784;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="iconos-top">
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Inicio" />
+        </a>
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
+
+    <div class="form-container">
+        <h2>Agregar Comentario al Ticket #@ticketId</h2>
+
+        <form method="post" asp-action="AgregarComentario" asp-controller="Tecnico">
+            <input type="hidden" name="ticketId" value="@ticketId" />
+
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" required />
+
+            <label for="comentario">Comentario</label>
+            <textarea id="comentario" name="comentario" rows="4" required></textarea>
+
+            <button type="submit" class="btn-guardar">Guardar Comentario</button>
+        </form>
+    </div>
+</body>
+</html>

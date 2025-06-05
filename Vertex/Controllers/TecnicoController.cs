@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Vertex.Models;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering; // Para SelectListItem
 
 namespace Vertex.Controllers
 {
@@ -15,42 +17,22 @@ namespace Vertex.Controllers
 
         public IActionResult Index()
         {
-            var nombreUsuario = HttpContext.Session.GetString("nombre");
-            ViewBag.NombreUsuario = nombreUsuario;
-
-            int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
-
-            List<tickets> listaTickets = new();
-
-            if (tecnicoId != null)
-            {
-                listaTickets = _context.asignaciones
-                    .Where(a => a.usuario_id == tecnicoId)
-                    .Select(a => a.ticket_id)
-                    .Distinct()
-                    .Join(_context.tickets,
-                        id => id,
-                        t => t.id,
-                        (id,t) => t)
-                    .Where(t => t.estado_ticket_id == 1)
-                    .ToList();
-            }
-
-            return View("Index", listaTickets);
-
+            var nombre = HttpContext.Session.GetString("nombre");
+            ViewBag.NombreUsuario = nombre ?? "Usuario";
+            return View();
         }
+
         public IActionResult MisAsignaciones()
         {
-            var nombreUsuario = HttpContext.Session.GetString("nombre");
-            ViewBag.NombreUsuario = nombreUsuario;
+            var nombre = HttpContext.Session.GetString("nombre");
+            ViewBag.NombreUsuario = nombre ?? "Usuario";
 
             int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
-
-            List<tickets> listaTickets = new();
+            List<tickets> listadoTickets = new();
 
             if (tecnicoId != null)
             {
-                listaTickets = _context.asignaciones
+                listadoTickets = _context.asignaciones
                     .Where(a => a.usuario_id == tecnicoId)
                     .Select(a => a.ticket_id)
                     .Distinct()
@@ -58,35 +40,199 @@ namespace Vertex.Controllers
                           id => id,
                           t => t.id,
                           (id, t) => t)
-                    .Where(t => t.estado_ticket_id == 1) // Pendientes
+                    .Where(t => t.estado_ticket_id == 1 || t.estado_ticket_id == 2)
                     .ToList();
             }
 
-            return View("MisAsignaciones", listaTickets);
+            return View(listadoTickets);
         }
 
-        public IActionResult Detalle(int id)
+        [HttpPost]
+        public IActionResult IniciarTrabajo(int id)
         {
-            // 1. Buscar el ticket
             var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
+            if (ticket != null && ticket.estado_ticket_id == 1)
+            {
+                ticket.estado_ticket_id = 2;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("ver_detalle", new { id = id });
+        }
+
+        public IActionResult ver_detalle(int id)
+        {
+            var ticket = _context.tickets
+                .Include(t => t.cliente)
+                .Include(t => t.categoria)
+                .Include(t => t.prioridad)
+                .Include(t => t.comentarios)
+                .Include(t => t.tareas)
+                .FirstOrDefault(t => t.id == id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            var estado = _context.estados_tickets.FirstOrDefault(e => e.id == ticket.estado_ticket_id);
+            ViewBag.Estado = estado?.estado ?? "Desconocido";
+
+            return View(ticket);
+        }
+
+        [HttpPost]
+        public IActionResult FinalizarTrabajo(int id)
+        {
+            var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
+            if (ticket != null && ticket.estado_ticket_id == 2)
+            {
+                ticket.estado_ticket_id = 4;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("ver_detalle", new { id = id });
+        }
+
+        [HttpGet]
+        public IActionResult AgregarComentario(int ticketId)
+        {
+            var ticket = _context.tickets.FirstOrDefault(t => t.id == ticketId);
             if (ticket == null)
                 return NotFound();
 
-            // 2. Cargar manualmente los datos relacionados
-            var categoria = _context.categorias.FirstOrDefault(c => c.id == ticket.categoria_id);
-            var prioridad = _context.prioridades.FirstOrDefault(p => p.id == ticket.prioridad_id);
-            var estado = _context.estados_tickets.FirstOrDefault(e => e.id == ticket.estado_ticket_id);
-            var cliente = _context.clientes.FirstOrDefault(c => c.id == ticket.cliente_id);
-
-            // 3. Enviar todo por ViewBag como hiciste con nombreUsuario
-            ViewBag.Categoria = categoria?.categoria ?? "Sin categoría";
-            ViewBag.Prioridad = prioridad?.prioridad ?? "Sin prioridad";
-            ViewBag.Estado = estado?.estado ?? "Sin estado";
-            ViewBag.Cliente = cliente != null ? $"{cliente.nombre} {cliente.apellido}" : "Sin cliente";
-
-            return View("Detalle", ticket);
-
+            ViewBag.TicketId = ticketId;
+            return View();
         }
 
+        [HttpPost]
+        public IActionResult AgregarComentario(int ticketId, string titulo, string comentario)
+        {
+            int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
+            var nuevoComentario = new comentarios
+            {
+                titulo = titulo,
+                comentario = comentario,
+                ticket_id = ticketId,
+                usuario_id = tecnicoId.Value
+            };
+
+            _context.comentarios.Add(nuevoComentario);
+            _context.SaveChanges();
+
+            return RedirectToAction("ver_detalle", new { id = ticketId });
+        }
+        [HttpPost]
+        public IActionResult Historial(string aplicacion, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
+            var tickets = _context.asignaciones
+                .Where(a => a.usuario_id == tecnicoId)
+                .Select(a => a.ticket_id)
+                .Distinct()
+                .Join(_context.tickets,
+                      id => id,
+                      t => t.id,
+                      (id, t) => t)
+                .Where(t => t.estado_ticket_id == 4) // "Resuelto"
+                .Include(t => t.prioridad)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(aplicacion))
+                tickets = tickets.Where(t => t.aplicacion.Contains(aplicacion));
+
+            if (fechaInicio.HasValue)
+                tickets = tickets.Where(t => t.fechacreacion >= fechaInicio.Value);
+
+            if (fechaFin.HasValue)
+                tickets = tickets.Where(t => t.fechacreacion <= fechaFin.Value);
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("nombre");
+            ViewBag.Aplicacion = aplicacion;
+            ViewBag.FechaInicio = fechaInicio?.ToString("yyyy-MM-dd");
+            ViewBag.FechaFin = fechaFin?.ToString("yyyy-MM-dd");
+
+            return View("Historial", tickets.ToList());
+        }
+
+
+        [HttpGet]
+        public IActionResult Historial()
+        {
+            var tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
+            var tickets = _context.asignaciones
+                .Where(a => a.usuario_id == tecnicoId)
+                .Select(a => a.ticket_id)
+                .Distinct()
+                .Join(_context.tickets,
+                      id => id,
+                      t => t.id,
+                      (id, t) => t)
+                .Where(t => t.estado_ticket_id == 4) // Solo los resueltos
+                .Include(t => t.prioridad)
+                .ToList();
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("nombre");
+            return View(tickets);
+        }
+
+
+
+
+        // ----------- MÉTODOS NUEVOS PARA CREAR TICKET -----------
+
+        [HttpGet]
+        public IActionResult CrearTicket()
+        {
+            ViewBag.Categorias = _context.categorias
+                .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
+                .ToList();
+
+            ViewBag.Prioridades = _context.prioridades
+                .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
+                .ToList();
+
+            return View(new tickets());
+        }
+
+
+        [HttpPost]
+        public IActionResult CrearTicket(tickets ticket)
+        {
+            if (ModelState.IsValid)
+            {
+                ticket.fechacreacion = DateTime.Now;
+                ticket.estado_ticket_id = 1; // Pendiente
+
+                // Asignar usuario/cliente de sesión si tienes el id
+                // ticket.usuario_id = ...;
+                // ticket.cliente_id = ...;
+
+                _context.tickets.Add(ticket);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index", "Cliente");
+            }
+
+            // Si falla, recarga los combos
+            ViewBag.Categorias = _context.categorias
+                .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
+                .ToList();
+
+            ViewBag.Prioridades = _context.prioridades
+                .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
+                .ToList();
+
+            return View(ticket);
+        }
     }
 }
