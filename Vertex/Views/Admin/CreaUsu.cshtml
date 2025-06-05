@@ -77,9 +77,22 @@
     </style>
 </head>
 <body>
+    <!-- Botones de Logout y Return -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 22px 38px 0 38px;">
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" style="width:48px; cursor:pointer;" />
+        </a>
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Cerrar sesión" style="width:48px; cursor:pointer;" />
+        </a>
+    </div>
+
+
+
     <div class="form-container">
         <h1>Creacion de Usuarios</h1>
         <form asp-action="CreaUsu" asp-controller="Admin" method="post">
+
             <div style="text-align:center; margin-bottom:18px;">
                 <label for="rol_id">Tipo de Usuario:</label>
                 <select asp-for="rol_id" asp-items="ViewBag.Roles"></select>
@@ -121,5 +134,6 @@
             </div>
         </form>
     </div>
+
 </body>
 </html>
