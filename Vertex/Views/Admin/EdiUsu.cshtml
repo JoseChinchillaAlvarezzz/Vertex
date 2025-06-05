@@ -1,0 +1,171 @@
+﻿@model Vertex.Models.usuarios
+@{
+    ViewBag.Title = "Editar Usuario";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .iconos-top {
+            position: absolute;
+            top: 24px;
+            right: 38px;
+        }
+
+            .iconos-top img {
+                width: 48px;
+                margin-left: 15px;
+                vertical-align: middle;
+            }
+
+        .iconos-left {
+            position: absolute;
+            top: 24px;
+            left: 28px;
+        }
+
+            .iconos-left img {
+                width: 48px;
+                vertical-align: middle;
+            }
+
+        .form-container {
+            width: 700px;
+            margin: 36px auto;
+            background: none;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 34px;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .input-col {
+            width: 48%;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 14px;
+            border: 1px solid #888;
+            font-size: 1.1rem;
+            font-family: inherit;
+        }
+
+        .center-btn {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-guardar {
+            background: #232323;
+            color: #fff163;
+            font-size: 1.4rem;
+            border-radius: 16px;
+            font-weight: 600;
+            padding: 12px 90px;
+            border: none;
+            cursor: pointer;
+            margin-top: 18px;
+            margin-bottom: 18px;
+            transition: background .13s;
+        }
+
+            .btn-guardar:active {
+                background: #444;
+            }
+
+        .title-section {
+            text-align: center;
+            margin-top: 32px;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="iconos-left">
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
+    <div class="iconos-top">
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Cerrar sesión" />
+        </a>
+    </div>
+
+    <div class="form-container">
+        <h1>Editar Usuario</h1>
+        <form asp-action="EditarUsuario" asp-controller="Admin" method="post">
+            <input type="hidden" asp-for="id" />
+
+            <div style="text-align:center; margin-bottom:18px;">
+                <label for="rol_id">Tipo de Usuario:</label><br />
+                <select asp-for="rol_id" asp-items="ViewBag.Roles" style="font-size:1.2rem; background:#eee; width:280px; padding:10px; border-radius:8px; margin-top:10px;"></select>
+            </div>
+            <div class="input-row">
+                <div class="input-col">
+                    <label for="nombre">Usuario</label>
+                    <input type="text" id="nombre" name="nombre" value="@Model.nombre" required />
+
+                    <label for="nombre_real">Nombre</label>
+                    <input type="text" id="nombre_real" name="nombre" value="@Model.nombre" required />
+
+                    <label for="telefono">Numero de telefono</label>
+                    <input type="text" id="telefono" name="telefono" value="@Model.telefono" required />
+
+                    <label for="empresa">Empresa</label>
+                    <input type="text" id="empresa" name="empresa" value="" />
+                </div>
+                <div class="input-col">
+                    <label for="contrasenia">Contraseña</label>
+                    <input type="password" id="contrasenia" name="contrasenia" value="@Model.contrasenia" required />
+
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" value="@Model.apellido" required />
+
+                    <label for="email">Correo Electronico</label>
+                    <input type="email" id="email" name="email" value="@Model.email" required />
+
+                    <label for="contacto_principal">Contacto Principal</label>
+                    <input type="text" id="contacto_principal" name="contacto_principal" value="" />
+                </div>
+            </div>
+            <div>
+                <label for="nombre_contacto">Nombre de Contacto</label>
+                <input type="text" id="nombre_contacto" name="nombre_contacto" value="" style="width:100%;" />
+            </div>
+            <div class="center-btn">
+                <button type="submit" class="btn-guardar">Guardar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
