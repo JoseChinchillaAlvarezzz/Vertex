@@ -1,0 +1,125 @@
+﻿@model Vertex.Models.usuarios
+@{
+    ViewBag.Title = "Creacion de Usuarios";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        .form-container {
+            width: 700px;
+            margin: 32px auto;
+            background: none;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 34px;
+            margin-bottom: 18px;
+            font-size: 2.5rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .input-col {
+            width: 48%;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 14px;
+            border: 1px solid #888;
+            font-size: 1.1rem;
+            font-family: inherit;
+        }
+
+        .center-btn {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-guardar {
+            background: #fff163;
+            color: #232323;
+            font-size: 1.3rem;
+            border-radius: 16px;
+            font-weight: 600;
+            padding: 13px 48px;
+            border: none;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: background .13s;
+        }
+
+            .btn-guardar:active {
+                background: #ffee7b;
+            }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Creacion de Usuarios</h1>
+        <form asp-action="CreaUsu" asp-controller="Admin" method="post">
+            <div style="text-align:center; margin-bottom:18px;">
+                <label for="rol_id">Tipo de Usuario:</label>
+                <select asp-for="rol_id" asp-items="ViewBag.Roles"></select>
+            </div>
+            <div class="input-row">
+                <div class="input-col">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" id="usuario" name="nombre" required value="@Model?.nombre" />
+
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required value="@Model?.nombre" />
+
+                    <label for="telefono">Numero de telefono</label>
+                    <input type="text" id="telefono" name="telefono" required value="@Model?.telefono" />
+
+                    <label for="empresa">Empresa</label>
+                    <input type="text" id="empresa" name="empresa" />
+                </div>
+                <div class="input-col">
+                    <label for="contrasenia">Contraseña</label>
+                    <input type="password" id="contrasenia" name="contrasenia" required value="@Model?.contrasenia" />
+
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" required value="@Model?.apellido" />
+
+                    <label for="email">Correo Electronico</label>
+                    <input type="email" id="email" name="email" required value="@Model?.email" />
+
+                    <label for="contacto_principal">Contacto Principal</label>
+                    <input type="text" id="contacto_principal" name="contacto_principal" />
+                </div>
+            </div>
+            <div>
+                <label for="nombre_contacto">Nombre de Contacto</label>
+                <input type="text" id="nombre_contacto" name="nombre_contacto" style="width:100%;" />
+            </div>
+            <div class="center-btn">
+                <button type="submit" class="btn-guardar">Guardar Usuario</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
