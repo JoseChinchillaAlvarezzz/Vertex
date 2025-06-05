@@ -211,7 +211,7 @@ namespace Vertex.Controllers
         {
             int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
             if (tecnicoId == null)
-                return RedirectToAction("Login", "Login");
+                return RedirectToAction("Index", "Tecnico");
 
             if (ModelState.IsValid)
             {
@@ -224,7 +224,7 @@ namespace Vertex.Controllers
                 _context.SaveChanges();
 
                 TempData["Success"] = "Ticket generado correctamente.";
-                return RedirectToAction("Crear");
+                return RedirectToAction("Index"); // ← esta es la redirección a la vista anterior
             }
 
             // Si ModelState falla, recargar dropdowns
@@ -238,6 +238,7 @@ namespace Vertex.Controllers
 
             return View(ticket);
         }
+
 
 
 

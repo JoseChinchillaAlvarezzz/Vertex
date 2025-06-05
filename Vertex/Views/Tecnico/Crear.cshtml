@@ -65,50 +65,67 @@
             color: green;
             font-weight: bold;
             margin-bottom: 16px;
-            text-align: center;
-        }
+            text-align: center;          
+        {
+
+        
+
+        
     </style>
 </head>
 <body>
-    <form asp-action="Crear" asp-controller="Tecnico" method="post">
-        @Html.ValidationSummary(true, "", new { @style = "color: red; font-weight: bold;" })
+    <div class="iconos-top">
+
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Inicio" />
+        </a>
+
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
+    <div class="container">
+
+        <form asp-action="Crear" asp-controller="Tecnico" method="post">
+            @Html.ValidationSummary(true, "", new { @style = "color: red; font-weight: bold;" })
 
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="mensaje-exito">@TempData["Success"]</div>
-        }
-        @if (ViewBag.Errores != null)
-        {
-            <div style="color:red; font-weight:bold; margin-bottom:20px;">
-                <ul>
-                    @foreach (var error in ViewBag.Errores)
-                    {
-                        <li>@error</li>
-                    }
-                </ul>
-            </div>
-        }
+            @if (TempData["Success"] != null)
+            {
+                <div class="mensaje-exito">@TempData["Success"]</div>
+            }
+            @if (ViewBag.Errores != null)
+            {
+                <div style="color:red; font-weight:bold; margin-bottom:20px;">
+                    <ul>
+                        @foreach (var error in ViewBag.Errores)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
 
 
-        <h1>Crear Ticket</h1>
+            <h1>Crear Ticket</h1>
 
-        @Html.LabelFor(m => m.titulo)
-        @Html.TextBoxFor(m => m.titulo, new { @required = "required" })
+            @Html.LabelFor(m => m.titulo)
+            @Html.TextBoxFor(m => m.titulo, new { @required = "required" })
 
-        @Html.LabelFor(m => m.descripcion)
-        @Html.TextAreaFor(m => m.descripcion, new { @required = "required" })
+            @Html.LabelFor(m => m.descripcion)
+            @Html.TextAreaFor(m => m.descripcion, new { @required = "required" })
 
-        @Html.LabelFor(m => m.aplicacion)
-        @Html.TextBoxFor(m => m.aplicacion, new { @required = "required" })
+            @Html.LabelFor(m => m.aplicacion)
+            @Html.TextBoxFor(m => m.aplicacion, new { @required = "required" })
 
-        @Html.LabelFor(m => m.categoria_id)
-        @Html.DropDownListFor(m => m.categoria_id, (List<SelectListItem>)ViewBag.Categorias, "-seleccione-", new { @required = "required" })
+            @Html.LabelFor(m => m.categoria_id)
+            @Html.DropDownListFor(m => m.categoria_id, (List<SelectListItem>)ViewBag.Categorias, "-seleccione-", new { @required = "required" })
 
-        @Html.LabelFor(m => m.prioridad_id)
-        @Html.DropDownListFor(m => m.prioridad_id, (List<SelectListItem>)ViewBag.Prioridades, "-seleccione-", new { @required = "required" })
+            @Html.LabelFor(m => m.prioridad_id)
+            @Html.DropDownListFor(m => m.prioridad_id, (List<SelectListItem>)ViewBag.Prioridades, "-seleccione-", new { @required = "required" })
 
-        <button type="submit" class="btn-submit">Generar Ticket</button>
-    </form>
+            <button type="submit" class="btn-submit">Generar Ticket</button>
+        </form>
+    </div>
 </body>
 </html>

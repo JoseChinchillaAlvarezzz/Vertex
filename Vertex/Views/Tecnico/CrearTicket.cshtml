@@ -67,9 +67,30 @@
             .btn-enviar:hover {
                 background: #ffe370;
             }
+
+        .iconos-top {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+            .iconos-top img {
+                width: 30px;
+                margin-left: 10px;
+            }
     </style>
 </head>
 <body>
+    <div class="iconos-top">
+
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Inicio" />
+        </a>
+
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
     <div class="form-container">
         <h2>Formulario de reporte de técnicos</h2>
         <form asp-action="CrearTicket" asp-controller="Tecnico" method="post">
