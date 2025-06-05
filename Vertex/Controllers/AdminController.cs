@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Vertex.Models;
 using Vertex.Services;
@@ -10,7 +11,7 @@ namespace Vertex.Controllers
     {
         private readonly ticketsContext _context;
         private readonly IConfiguration _configuration;
-        public AdminController(ticketsContext context, IConfiguration configuration) 
+        public AdminController(ticketsContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -36,10 +37,10 @@ namespace Vertex.Controllers
 
             var listadoTicketsActivos = (from t in _context.tickets
                                          join p in _context.prioridades on t.prioridad_id equals p.id
-                                         where (t.estado_ticket_id == 1 || t.estado_ticket_id == 2 || t.estado_ticket_id ==3)
+                                         where (t.estado_ticket_id == 1 || t.estado_ticket_id == 2 || t.estado_ticket_id == 3)
                                          && t.usuario_id == adminId
                                          && _context.asignaciones.Any(a => a.ticket_id == t.id)
-                                         select new 
+                                         select new
                                          {
                                              id = t.id,
                                              titulo = t.titulo,
@@ -53,7 +54,7 @@ namespace Vertex.Controllers
         }
 
         [HttpGet]
-        public IActionResult Asignar(int idTicket) 
+        public IActionResult Asignar(int idTicket)
         {
             var tecnicos = (from u in _context.usuarios
                             where u.rol_id == 2
@@ -86,7 +87,7 @@ namespace Vertex.Controllers
                                      aplicacion = t.aplicacion,
                                      categoria = ca.categoria,
                                      prioridad = p.prioridad,
-                                     idPrioridad = t.prioridad_id 
+                                     idPrioridad = t.prioridad_id
                                  }).FirstOrDefault();
 
             ViewData["Tecnicos"] = new SelectList(tecnicos, "id", "nombre");
@@ -242,12 +243,229 @@ namespace Vertex.Controllers
             return View(usuario);
         }
 
+        [HttpGet]
+        public IActionResult Detalle(int idTicket)
+        {
+            var detalleTicket = (from t in _context.tickets
+                                 join c in _context.clientes on t.cliente_id equals c.id
+                                 join p in _context.prioridades on t.prioridad_id equals p.id
+                                 join ca in _context.categorias on t.categoria_id equals ca.id
+                                 join a in _context.asignaciones on t.id equals a.ticket_id
+                                 join u in _context.usuarios on a.usuario_id equals u.id
+                                 where t.id == idTicket
+                                 select new DetalleTicketViewModel
+                                 {
+                                     id = t.id,
+                                     nombre = c.nombre,
+                                     apellido = c.apellido,
+                                     telefono = c.telefono,
+                                     correo = c.email,
+                                     categoria = ca.categoria,
+                                     prioridad = p.prioridad,
+                                     aplicacion = t.aplicacion,
+                                     tecnico = u.nombre + " " + u.apellido,
+                                     descripcion = t.descripcion
+                                 }).FirstOrDefault();
+
+            var comentarios = (from c in _context.comentarios
+                               where c.ticket_id == idTicket
+                               select new ComentarioViewModel
+                               {
+                                   id = c.id,
+                                   titulo = c.titulo
+                               }).ToList();
+
+            var tareas = (from t in _context.tareas
+                          where t.ticket_id == idTicket
+                          select new TareaViewModel
+                          {
+                              id = t.id,
+                              titulo = t.titulo
+                          }).ToList();
+
+            var viewModel = new DetalleTicketCompletoViewModel
+            {
+                Detalle = detalleTicket,
+                Comentarios = comentarios,
+                Tareas = tareas
+            };
+
+            ViewData["detalleTicket"] = detalleTicket;
+            ViewData["Comentarios"] = comentarios;
+            ViewData["Tareas"] = tareas;
+
+            return View(viewModel);
+        }
+        public IActionResult DetalleTic(int id)
+        {
+
+            {
+                var ticket = _context.tickets
+                    .Include(t => t.cliente)
+                    .Include(t => t.categoria)
+                    .Include(t => t.prioridad)
+                    .FirstOrDefault(t => t.id == id);
+
+                if (ticket == null)
+                    return NotFound();
+
+                // Tareas y comentarios asociados
+                ticket.tareas = _context.tareas.Where(t => t.ticket_id == id).ToList();
+                ticket.comentarios = _context.comentarios.Where(c => c.ticket_id == id).ToList();
+
+                // Obtener técnicos (para el select de técnico encargado)
+                var tecnicos = _context.usuarios
+                    .Where(u => u.rol_id == 2)
+                    .Select(u => new { id = u.id, Nombre = u.nombre + " " + u.apellido })
+                    .ToList();
+
+                // Técnico encargado (última asignación para este ticket)
+                int? tecnicoEncargadoId = _context.asignaciones
+                    .Where(a => a.ticket_id == id)
+                    .OrderByDescending(a => a.fechaasignacion)
+                    .Select(a => (int?)a.usuario_id)
+                    .FirstOrDefault();
+
+                ViewBag.Tecnicos = tecnicos;
+                ViewBag.TecnicoEncargadoId = tecnicoEncargadoId;
+
+                return View(ticket);
 
 
+            }
+        }
+        public IActionResult InfoTick()
+        {
 
+            // Supongamos que estado_ticket_id = 4 es "Completado"
+            var ticketsCompletados = _context.tickets
+                .Where(t => t.estado_ticket_id == 4)
+                .OrderByDescending(t => t.fechacreacion)
+                .ToList();
 
+            return View(ticketsCompletados);
+        }
 
+        [HttpGet]
+        public IActionResult AgregarComentarioAdmin(int ticketId)
+        {
+            var ticket = (from t in _context.tickets
+                          where t.id == ticketId
+                          select t).FirstOrDefault();
+
+            ViewData["ticket"] = ticket.id;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AgregarComentarioAdmin(int ticketId, string titulo, string comentario)
+        {
+            var adminId = HttpContext.Session.GetInt32("usuarioId");
+
+            var nuevoComentario = new comentarios
+            {
+                titulo = titulo,
+                comentario = comentario,
+                ticket_id = ticketId,
+                usuario_id = adminId.Value,
+            };
+
+            _context.comentarios.Add(nuevoComentario);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Admin", new { id = ticketId });
+        }
+
+        [HttpGet]
+        public IActionResult AgregarTarea(int ticketId) 
+        {
+            var ticket = (from t in _context.tickets
+                          where t.id == ticketId
+                          select t).FirstOrDefault();
+
+            ViewData["ticket"] = ticket.id;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AgregarTarea(int ticketId, string titulo, string descripcion) 
+        {
+            var adminId = HttpContext.Session.GetInt32("usuarioId");
+
+            var nuevaTarea = new tareas
+            {
+                titulo = titulo,
+                descripcion = descripcion,
+                ticket_id = ticketId,
+                estado_tarea_id = 1
+            };
+
+            _context.tareas.Add(nuevaTarea);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Admin", new { id = ticketId });
+        }
+
+        public IActionResult Dashboard()
+        {
+            // 1) DISTRIBUCIÓN POR PRIORIDAD (conteo total de tickets por prioridad)
+            var priorityCounts = _context.tickets
+                .Include(t => t.prioridad)
+                .GroupBy(t => t.prioridad.prioridad)
+                .Select(g => new
+                {
+                    PriorityName = g.Key,
+                    Count = g.Count()
+                })
+                .ToDictionary(x => x.PriorityName, x => x.Count);
+
+            // 2) TICKETS ÚLTIMOS 30 DÍAS POR APLICACIÓN
+            var fromDate = DateTime.Today.AddDays(-30);
+            var appCounts = _context.tickets
+                .Where(t => t.fechacreacion >= fromDate &&
+                            !string.IsNullOrEmpty(t.aplicacion))
+                .GroupBy(t => t.aplicacion)
+                .Select(g => new
+                {
+                    AppName = g.Key!,
+                    Count = g.Count()
+                })
+                .ToDictionary(x => x.AppName, x => x.Count);
+
+            // 3) TOP TÉCNICOS CON MÁS TICKETS RESUELTOS
+            //    Hacemos un join manual: asignaciones → tickets → usuarios
+            var techResolved = (
+                from a in _context.asignaciones
+                join t in _context.tickets on a.ticket_id equals t.id
+                where t.estado_ticket_id == 4              // solo “Resuelto”
+                group a by a.usuario_id into grp
+                select new
+                {
+                    TechnicianId = grp.Key,
+                    Count = grp.Count()
+                }
+            )
+            .Join(
+                _context.usuarios,
+                grp => grp.TechnicianId,
+                u => u.id,
+                (grp, u) => new
+                {
+                    FullName = u.nombre + " " + u.apellido,
+                    Count = grp.Count
+                }
+            )
+            .ToDictionary(x => x.FullName, x => x.Count);
+
+            // Empaquetamos en el ViewModel
+            var vm = new DashboardViewModel
+            {
+                PriorityCounts = priorityCounts,
+                ApplicationCountsLast30Days = appCounts,
+                TechnicianResolvedCounts = techResolved
+            };
+
+            return View(vm);
+        }
     }
-
 }
-

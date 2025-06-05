@@ -1,0 +1,272 @@
+﻿@model DetalleTicketCompletoViewModel
+
+@{
+    ViewBag.Title = "Detalle de ticket";
+    Layout = null;
+    var ticket = (dynamic)ViewData["detalleTicket"];
+    var comentarios = ViewData["Comentarios"] as List<ComentarioViewModel> ?? new List<ComentarioViewModel>();
+    var tareas = ViewData["Tareas"] as List<TareaViewModel> ?? new List<TareaViewModel>();
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ticket #@ticket.id</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: Arial, 'DM Serif Display', serif;
+            margin: 0;
+            padding: 0;
+        }
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 34px 48px 0 48px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .top-bar img {
+            width: 52px;
+            cursor: pointer;
+        }
+        .main-container {
+            background: #fff;
+            border-radius: 25px;
+            margin: 48px auto 32px auto;
+            padding: 54px 48px 42px 48px;
+            max-width: 1100px;
+            min-width: 340px;
+            box-shadow: 0 2px 15px 0 rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            text-align: center;
+            margin: 0 0 44px 0;
+            font-size: 3rem;
+            letter-spacing: 1.5px;
+        }
+        .row-flex {
+            display: flex;
+            gap: 34px;
+            margin-bottom: 32px;
+        }
+        .row-flex > div {
+            flex: 1;
+        }
+        .form-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 7px;
+            display: block;
+        }
+        input[type="text"], textarea {
+            background: #fff;
+            border: 2.2px solid #b0b0b0;
+            border-radius: 20px;
+            padding: 14px 24px;
+            font-size: 1.14rem;
+            width: 100%;
+            margin-bottom: 0;
+            margin-top: 3px;
+            box-sizing: border-box;
+        }
+        input[readonly], textarea[readonly] {
+            background: #f5f5f5;
+        }
+        textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+        .big-input {
+            margin-bottom: 35px;
+            margin-top: 13px;
+        }
+        .section-flex {
+            display: flex;
+            gap: 52px;
+            margin-top: 50px;
+        }
+        .box {
+            background: #fff;
+            border: 1.6px solid #b6b6b6;
+            border-radius: 13px;
+            padding: 23px 19px 25px 19px;
+            flex: 1;
+            min-width: 250px;
+            max-width: 340px;
+            box-sizing: border-box;
+        }
+        .box-title {
+            font-weight: bold;
+            font-size: 1.15rem;
+            margin-bottom: 13px;
+            border-bottom: 1.4px solid #bbb;
+            padding-bottom: 5px;
+        }
+        .box-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .box-table th, .box-table td {
+            text-align: left;
+            font-size: 1.09rem;
+            padding: 10px 3px;
+        }
+        .box-table th {
+            border-bottom: 1.1px solid #b9b9b9;
+            font-weight: 600;
+        }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            justify-content: flex-end;
+            align-items: flex-end;
+            margin-left: 60px;
+            margin-top: 38px;
+        }
+        .btn-main {
+            background: #232323;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            padding: 20px 44px;
+            cursor: pointer;
+            min-width: 270px;
+            margin-bottom: 0;
+            box-shadow: 0 3px 12px rgba(130,130,130,0.08);
+            transition: background 0.14s;
+            text-align: center;
+        }
+        .btn-main:active {
+            background: #444;
+        }
+        .ver-link {
+            color: #232323;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-left: 12px;
+            font-size: 1.13rem;
+        }
+        {
+            .main-container { max-width: 98vw; padding: 20px 2vw 24px 2vw; }
+            .section-flex { gap: 18px; }
+        }
+         {
+            .section-flex { flex-direction: column; gap: 22px; }
+            .action-buttons { margin-left: 0; align-items: stretch; gap: 18px; margin-top: 30px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Cerrar sesión" />
+        </a>
+    </div>
+
+    <div class="main-container">
+        <h1>Ticket #@ticket.id</h1>
+        <form>
+            <!-- Primera fila de inputs -->
+            <div class="row-flex">
+                <div>
+                    <label class="form-label">Nombre</label>
+                    <input type="text" value="@ticket.nombre" readonly />
+                </div>
+                <div>
+                    <label class="form-label">Apellido</label>
+                    <input type="text" value="@ticket.apellido" readonly />
+                </div>
+                <div>
+                    <label class="form-label">Numero de telefono</label>
+                    <input type="text" value="@ticket.telefono" readonly />
+                </div>
+                <div>
+                    <label class="form-label">Correo Electronico</label>
+                    <input type="text" value="@ticket.correo" readonly />
+                </div>
+            </div>
+            <!-- Segunda fila de inputs -->
+            <div class="row-flex" style="margin-top:32px;">
+                <div>
+                    <label class="form-label">Categoria</label>
+                    <input type="text" value="@ticket.categoria" readonly />
+                </div>
+                <div>
+                    <label class="form-label">Prioridad</label>
+                    <input type="text" value="@ticket.prioridad" readonly />
+                </div>
+                <div>
+                    <label class="form-label">Aplicacion afectada</label>
+                    <input type="text" value="@ticket.aplicacion" readonly />
+                </div>
+                <div>
+                    <label class="form-label">Tecnico encargado</label>
+                    <input type="text" value="@ticket.tecnico" readonly />
+                </div>
+            </div>
+            <div style="margin-top:38px;">
+                <label class="form-label">Descripcion del problema</label>
+                <textarea readonly class="big-input">@ticket.descripcion</textarea>
+            </div>
+        </form>
+        <div class="section-flex">
+            <div class="box">
+                <div class="box-title">Comentarios</div>
+                <table class="box-table">
+                    <tr><th>Titulo</th><th></th></tr>
+                    @if (Model.Detalle != null && Model.Comentarios.Any())
+                    {
+                        foreach (var comentario in Model.Comentarios)
+                        {
+                            <tr>
+                                <td>@comentario.titulo</td>
+                                <td><a href="@Url.Action("VerComentario", "Tecnico", new { id = comentario.id })" class="ver-link">Ver</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="2"><i>Sin comentarios</i></td></tr>
+                    }
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-title">Tareas</div>
+                <table class="box-table">
+                    <tr><th>Titulo</th><th></th></tr>
+                    @if (Model.Tareas != null && Model.Tareas.Any())
+                    {
+                        foreach (var tarea in Model.Tareas)
+                        {
+                            <tr>
+                                <td>@tarea.titulo</td>
+                                <td><a href="@Url.Action("VerTarea", "Tecnico", new { id = tarea.id })" class="ver-link">Ver</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="2"><i>Sin tareas</i></td></tr>
+                    }
+                </table>
+            </div>
+            <div class="action-buttons">
+                <a href="@Url.Action("AgregarTarea", "Admin", new { ticketId = ticket.id })" class="btn-main">Agregar tarea</a>
+                <a href="@Url.Action("AgregarComentarioAdmin", "Admin", new { ticketId = ticket.id })" class="btn-main">Agregar comentario</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -33,7 +33,7 @@ namespace Vertex.Models
         [Column("prioridad_id")]
         public int? prioridad_id { get; set; }
 
-        // Relaciones de navegación
+        //  Relaciones de navegación
         [ForeignKey("cliente_id")]
         public virtual clientes? cliente { get; set; }
 
@@ -44,10 +44,8 @@ namespace Vertex.Models
         public virtual prioridades? prioridad { get; set; }
 
         
-        [NotMapped]
         public virtual ICollection<comentarios>? comentarios { get; set; }
 
-        [NotMapped]
         public virtual ICollection<tareas>? tareas { get; set; }
     }
 }

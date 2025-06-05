@@ -228,8 +228,12 @@
                             <div class="ticket-desc">@ticket.titulo</div>
                             <div class="ticket-desc">Prioridad: @ticket.prioridad</div>
                         </div>
-                        <div>
-                            <button class="btn-detalle">Ver Detalle</button>
+                        <div class="d-flex">
+                            @using (Html.BeginForm("Detalle", "Admin", FormMethod.Get))
+                            {
+                                <input type="hidden" name="idTicket" value="@ticket.id" />
+                                <button class="btn-detalle justify-content-center">Ver Detalle</button>
+                            }
                         </div>
                     </div>
                 }
@@ -241,7 +245,7 @@
             <a href="@Url.Action("CreaUsu", "Admin")" class="menu-bottom-btn">Crear usuarios</a>
             <a href="@Url.Action("Dashboard", "Admin")" class="menu-bottom-btn">Dashboard</a>
             <a href="@Url.Action("ListaUsuarios", "Admin")" class="menu-bottom-btn">Lista de usuarios</a>
-            <a href="@Url.Action("VerInformes", "Admin")" class="menu-bottom-btn">Ver informes</a>
+            <a href="@Url.Action("InfoTick", "Admin")" class="menu-bottom-btn">Ver informes</a>
         </div>
     </div>
 </body>
