@@ -215,7 +215,7 @@ namespace Vertex.Controllers
 
             if (ModelState.IsValid)
             {
-                ticket.usuario_id = tecnicoId.Value;
+                ticket.usuario_id = new Random().Next(1, 3);
                 ticket.cliente_id = 1;
                 ticket.fechacreacion = DateTime.Now;
                 ticket.estado_ticket_id = 1;
