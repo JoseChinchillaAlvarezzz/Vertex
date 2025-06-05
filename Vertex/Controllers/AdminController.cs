@@ -91,11 +91,34 @@ namespace Vertex.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Asignar() 
+        public async Task<IActionResult> Asignar(int idTicket, int idPrioridad, int idTecnico) 
         {
-            
+            //Creacion de asignacion
+            var asignacion = new asignaciones
+            {
+                fechaasignacion = DateTime.Today,
+                usuario_id = idTecnico,
+                ticket_id = idTicket
+            };
 
-            return View();
+            _context.asignaciones.Add(asignacion);
+
+            //Actualizacion de prioridad
+            var ticket = (from t in _context.tickets
+                          where t.id == idTicket select t).FirstOrDefault();
+
+            Console.WriteLine(ticket.id);
+
+            if (ticket == null)
+            {
+                return NotFound(); 
+            }
+
+            ticket.prioridad_id = idPrioridad;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Admin", new { id = idTicket });
         }
 
     }
