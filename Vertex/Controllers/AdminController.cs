@@ -346,7 +346,35 @@ namespace Vertex.Controllers
             return View(ticketsCompletados);
         }
 
+        [HttpGet]
+        public IActionResult AgregarComentarioAdmin(int ticketId)
+        {
+            var ticket = (from t in _context.tickets
+                          where t.id == ticketId
+                          select t).FirstOrDefault();
 
+            ViewData["ticket"] = ticket.id;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AgregarComentarioAdmin(int ticketId, string titulo, string comentario)
+        {
+            var adminId = HttpContext.Session.GetInt32("usuarioId");
+
+            var nuevoComentario = new comentarios
+            {
+                titulo = titulo,
+                comentario = comentario,
+                ticket_id = ticketId,
+                usuario_id = adminId.Value,
+            };
+
+            _context.comentarios.Add(nuevoComentario);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Admin", new { id = ticketId });
+        }
 
     }
 }
