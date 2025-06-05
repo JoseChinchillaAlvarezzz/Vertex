@@ -127,6 +127,68 @@ namespace Vertex.Controllers
 
             return RedirectToAction("ver_detalle", new { id = ticketId });
         }
+        [HttpPost]
+        public IActionResult Historial(string aplicacion, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
+            var tickets = _context.asignaciones
+                .Where(a => a.usuario_id == tecnicoId)
+                .Select(a => a.ticket_id)
+                .Distinct()
+                .Join(_context.tickets,
+                      id => id,
+                      t => t.id,
+                      (id, t) => t)
+                .Where(t => t.estado_ticket_id == 4) // "Resuelto"
+                .Include(t => t.prioridad)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(aplicacion))
+                tickets = tickets.Where(t => t.aplicacion.Contains(aplicacion));
+
+            if (fechaInicio.HasValue)
+                tickets = tickets.Where(t => t.fechacreacion >= fechaInicio.Value);
+
+            if (fechaFin.HasValue)
+                tickets = tickets.Where(t => t.fechacreacion <= fechaFin.Value);
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("nombre");
+            ViewBag.Aplicacion = aplicacion;
+            ViewBag.FechaInicio = fechaInicio?.ToString("yyyy-MM-dd");
+            ViewBag.FechaFin = fechaFin?.ToString("yyyy-MM-dd");
+
+            return View("Historial", tickets.ToList());
+        }
+
+
+        [HttpGet]
+        public IActionResult Historial()
+        {
+            var tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
+            var tickets = _context.asignaciones
+                .Where(a => a.usuario_id == tecnicoId)
+                .Select(a => a.ticket_id)
+                .Distinct()
+                .Join(_context.tickets,
+                      id => id,
+                      t => t.id,
+                      (id, t) => t)
+                .Where(t => t.estado_ticket_id == 4) // Solo los resueltos
+                .Include(t => t.prioridad)
+                .ToList();
+
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("nombre");
+            return View(tickets);
+        }
+
+
+
 
 
     }
