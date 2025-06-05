@@ -213,6 +213,21 @@ namespace Vertex.Controllers
             {
                 _context.usuarios.Update(usuario);
                 _context.SaveChanges();
+
+                
+                correo enviarCorreo = new correo(_configuration);
+                string asunto = "Actualización de Datos - Sistema Vertex";
+                string mensaje = $@"
+            Hola <b>{usuario.nombre} {usuario.apellido}</b>,<br><br>
+            Tus datos han sido actualizados correctamente en el sistema Vertex.<br><br>
+            <b>Correo:</b> {usuario.email}<br>
+            <b>Teléfono:</b> {usuario.telefono}<br>
+            <b>Rol:</b> {(_context.roles.FirstOrDefault(r => r.id == usuario.rol_id)?.rol ?? "Desconocido")}<br><br>
+            Si no solicitaste esta modificación, por favor contáctanos.<br><br>
+            <i>Equipo Vertex</i>
+        ";
+                enviarCorreo.enviar(usuario.email, asunto, mensaje);
+
                 return RedirectToAction("Index");
             }
             ViewBag.Roles = new SelectList(_context.roles.ToList(), "id", "rol", usuario.rol_id);

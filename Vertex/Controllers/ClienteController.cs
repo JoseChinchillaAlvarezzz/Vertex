@@ -105,7 +105,7 @@ namespace Vertex.Controllers
                 string asunto = "Confirmación de Ticket - Vertex";
                 string mensaje = $@"
             Hola <b>{cliente.nombre} {cliente.apellido}</b>,<br><br>
-            Hemos recibido tu ticket:<br>
+            Hemos recibido tu ticket:{ticket.id}<br>
             <b>Título:</b> {ticket.titulo}<br>
             <b>Aplicación:</b> {ticket.aplicacion}<br>
             <b>Descripción:</b> {ticket.descripcion}<br>
