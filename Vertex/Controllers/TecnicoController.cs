@@ -193,7 +193,6 @@ namespace Vertex.Controllers
         [HttpGet]
         public IActionResult CrearTicket()
         {
-            // Llenar combos desde la base de datos
             ViewBag.Categorias = _context.categorias
                 .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
                 .ToList();
@@ -202,8 +201,9 @@ namespace Vertex.Controllers
                 .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
                 .ToList();
 
-            return View();
+            return View(new tickets());
         }
+
 
         [HttpPost]
         public IActionResult CrearTicket(tickets ticket)
