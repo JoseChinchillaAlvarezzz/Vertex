@@ -194,7 +194,29 @@ namespace Vertex.Controllers
             return View(usuario);
         }
 
-       
+        [HttpGet]
+        public IActionResult EditarUsuario(int id)
+        {
+            var usuario = _context.usuarios.FirstOrDefault(u => u.id == id);
+            if (usuario == null) return NotFound();
+
+            // Llenar los roles para el combo
+            ViewBag.Roles = new SelectList(_context.roles.ToList(), "id", "rol", usuario.rol_id);
+            return View(usuario);
+
+        }
+        [HttpPost]
+        public IActionResult EditarUsuario(usuarios usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.usuarios.Update(usuario);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.Roles = new SelectList(_context.roles.ToList(), "id", "rol", usuario.rol_id);
+            return View(usuario);
+        }
 
         [HttpGet]
         public IActionResult EdiUsu(int id)
