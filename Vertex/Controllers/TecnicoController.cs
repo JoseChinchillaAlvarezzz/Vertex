@@ -3,16 +3,19 @@ using Vertex.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering; // Para SelectListItem
+using Vertex.Services;
 
 namespace Vertex.Controllers
 {
     public class TecnicoController : Controller
     {
         private readonly ticketsContext _context;
-
-        public TecnicoController(ticketsContext context)
+        private IConfiguration _configuration;
+        public TecnicoController(ticketsContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+
         }
 
         public IActionResult Index()
@@ -84,15 +87,59 @@ namespace Vertex.Controllers
         [HttpPost]
         public IActionResult FinalizarTrabajo(int id)
         {
+            correo enviarcorreo = new correo(_configuration);
             var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
             if (ticket != null && ticket.estado_ticket_id == 2)
             {
                 ticket.estado_ticket_id = 4;
                 _context.SaveChanges();
+
+                // Obtener datos del cliente o usuario
+                string destinatario = "";
+                string nombreCompleto = "";
+                if (ticket.cliente_id != null)
+                {
+                    var cliente = _context.clientes.FirstOrDefault(c => c.id == ticket.cliente_id);
+                    if (cliente != null)
+                    {
+                        destinatario = cliente.email;
+                        nombreCompleto = cliente.nombre + " " + cliente.apellido;
+                    }
+                }
+                else if (ticket.usuario_id != null)
+                {
+                    var usuario = _context.usuarios.FirstOrDefault(u => u.id == ticket.usuario_id);
+                    if (usuario != null)
+                    {
+                        destinatario = usuario.email;
+                        nombreCompleto = usuario.nombre + " " + usuario.apellido;
+                    }
+                }
+
+                // Si se encontró un destinatario, enviar correo
+                if (!string.IsNullOrEmpty(destinatario))
+                {
+                    string asunto = "Finalización de Ticket - Vertex";
+                    string mensaje = $@"
+                Hola <b>{nombreCompleto}</b>,<br><br>
+                Te informamos que tu ticket ha sido finalizado exitosamente:<br><br>
+                <b>Número de Ticket:</b> {ticket.id}<br>
+                <b>Título:</b> {ticket.titulo}<br>
+                <b>Aplicación:</b> {ticket.aplicacion}<br>
+                <b>Descripción:</b> {ticket.descripcion}<br>
+                <b>Fecha de creación:</b> {ticket.fechacreacion:dd/MM/yyyy HH:mm}<br><br>
+                Estado actual: <b>Finalizado</b><br><br>
+                Gracias por utilizar nuestro sistema.<br><br>
+                <i>Equipo Vertex</i>";
+
+                    correo enviarCorreo = new correo(_configuration);
+                    enviarCorreo.enviar(destinatario, asunto, mensaje);
+                }
             }
 
             return RedirectToAction("ver_detalle", new { id = id });
         }
+
 
         [HttpGet]
         public IActionResult AgregarComentario(int ticketId)
