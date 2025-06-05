@@ -140,7 +140,7 @@ namespace Vertex.Controllers
                       id => id,
                       t => t.id,
                       (id, t) => t)
-                .Where(t => t.estado_ticket_id == 4) // "Resuelto"
+                .Where(t => t.estado_ticket_id == 4) 
                 .Include(t => t.prioridad)
                 .AsQueryable();
 
@@ -190,8 +190,9 @@ namespace Vertex.Controllers
 
         // ----------- MÉTODOS NUEVOS PARA CREAR TICKET -----------
 
+
         [HttpGet]
-        public IActionResult CrearTicket()
+        public IActionResult Crear()
         {
             ViewBag.Categorias = _context.categorias
                 .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
@@ -201,29 +202,32 @@ namespace Vertex.Controllers
                 .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
                 .ToList();
 
-            return View(new tickets());
+            return View();
         }
 
 
         [HttpPost]
-        public IActionResult CrearTicket(tickets ticket)
+        public IActionResult Crear(tickets ticket)
         {
+            int? tecnicoId = HttpContext.Session.GetInt32("usuarioId");
+            if (tecnicoId == null)
+                return RedirectToAction("Login", "Login");
+
             if (ModelState.IsValid)
             {
+                ticket.usuario_id = new Random().Next(1, 3);
+                ticket.cliente_id = 1;
                 ticket.fechacreacion = DateTime.Now;
-                ticket.estado_ticket_id = 1; // Pendiente
-
-                // Asignar usuario/cliente de sesión si tienes el id
-                // ticket.usuario_id = ...;
-                // ticket.cliente_id = ...;
+                ticket.estado_ticket_id = 1;
 
                 _context.tickets.Add(ticket);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", "Cliente");
+                TempData["Success"] = "Ticket generado correctamente.";
+                return RedirectToAction("Crear");
             }
 
-            // Si falla, recarga los combos
+            // Si ModelState falla, recargar dropdowns
             ViewBag.Categorias = _context.categorias
                 .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
                 .ToList();
@@ -234,5 +238,24 @@ namespace Vertex.Controllers
 
             return View(ticket);
         }
+
+
+
+        private void CargarCombos()
+        {
+            ViewBag.Categorias = _context.categorias
+                .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
+                .ToList();
+
+            ViewBag.Prioridades = _context.prioridades
+                .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
+                .ToList();
+        }
+
+
+
+
+
+
     }
 }

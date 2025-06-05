@@ -1,6 +1,4 @@
 ﻿@model Vertex.Models.tickets
-
-
 @{
     ViewBag.Title = "Crear nuevo ticket";
     Layout = null;
@@ -90,18 +88,17 @@
             <div style="display: flex; gap: 18px;">
                 <div style="flex:1;">
                     <label>Categoría</label>
-                    @Html.DropDownListFor(m => m.prioridad_id, (IEnumerable<SelectListItem>)ViewBag.Prioridades, "-seleccione una prioridad-", new { @required = "required" })
+                    @Html.DropDownListFor(m => m.categoria_id, (List<SelectListItem>)ViewBag.Categorias, "-seleccione una categoria-", new { @required = "required" })
                 </div>
                 <div style="flex:1;">
                     <label>Prioridad</label>
-                    @Html.DropDownListFor(m => m.categoria_id, (IEnumerable<SelectListItem>)ViewBag.Categorias, "-seleccione una categoría-", new { @required = "required" })
+                    @Html.DropDownListFor(m => m.prioridad_id, (List<SelectListItem>)ViewBag.Prioridades, "-seleccione una prioridad-", new { @required = "required" })
                 </div>
                 <div style="flex:1;">
                     <label>Nombre de la Aplicación afectada</label>
-                    @Html.TextBoxFor(m => m.aplicacion, new { @required = "required" })
+                    <input type="text" name="aplicacion" value="" required />
                 </div>
             </div>
-
 
             <label>Descripción del problema</label>
             <textarea name="descripcion" required></textarea>

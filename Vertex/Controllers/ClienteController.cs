@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Vertex.Models;
+using Vertex.Services;
 
 namespace Vertex.Controllers
 {
@@ -8,10 +9,12 @@ namespace Vertex.Controllers
     {
 
         public readonly ticketsContext _context;
+        private IConfiguration _configuration;
 
-        public ClienteController(ticketsContext context)
+        public ClienteController(ticketsContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -70,6 +73,10 @@ namespace Vertex.Controllers
         [HttpPost]
         public IActionResult Crear(tickets ticket)
         {
+
+            Random rnd = new Random();
+            correo enviarcorreo = new correo(_configuration);
+
             int? clienteId = HttpContext.Session.GetInt32("clienteId");
             if (clienteId == null)
                 return RedirectToAction("Index", "Login");
@@ -83,14 +90,36 @@ namespace Vertex.Controllers
 
             ticket.fechacreacion = DateTime.Now;
             ticket.cliente_id = clienteId.Value;
-            ticket.estado_ticket_id = 1; 
-            ticket.usuario_id = 1; 
+            ticket.estado_ticket_id = 1;
+            ticket.usuario_id = rnd.Next(1, 3); 
+                                               
 
             _context.tickets.Add(ticket);
             _context.SaveChanges();
 
+            // OBTENER datos de cliente desde la base de datos
+            var cliente = _context.clientes.FirstOrDefault(c => c.id == clienteId);
+            if (cliente != null)
+            {
+                string correoDestino = cliente.email;
+                string asunto = "Confirmación de Ticket - Vertex";
+                string mensaje = $@"
+            Hola <b>{cliente.nombre} {cliente.apellido}</b>,<br><br>
+            Hemos recibido tu ticket:<br>
+            <b>Título:</b> {ticket.titulo}<br>
+            <b>Aplicación:</b> {ticket.aplicacion}<br>
+            <b>Descripción:</b> {ticket.descripcion}<br>
+            <b>Fecha:</b> {ticket.fechacreacion:dd/MM/yyyy HH:mm}<br><br>
+            Te contactaremos pronto. Gracias por tu confianza.<br><br>
+            <i>Equipo Vertex</i>
+        ";
+
+                enviarcorreo.enviar(correoDestino, asunto, mensaje);
+            }
+
             return RedirectToAction("Index");
         }
+
 
         public IActionResult Detalle(int id)
         {

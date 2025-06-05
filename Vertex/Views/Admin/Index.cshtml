@@ -1,164 +1,201 @@
 ﻿@{
-    ViewBag.Title = "Mis tickets pendientes";
-    Layout = null; 
+
+    Layout = null;
+    var nombreUsuario = ViewBag.NombreUsuario as string ?? "Usuario";
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>@ViewBag.Title</title>
+    <title>Bienvenido @nombreUsuario - Vertex</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <style>
         body {
-        margin: 0;
-        padding: 0;
-        background: #abd4eb;
-        font-family: 'Quicksand', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #abd4eb;
+            font-family: 'Quicksand', Arial, sans-serif;
         }
 
         .container {
-        max-width: 1300px;
-        margin: 0 auto;
-        padding: 38px 24px 0 24px;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 38px 24px 0 24px;
+        }
+
+        .center-header {
+            text-align: center;
+            margin-bottom: 8px;
         }
 
         .welcome {
-        font-size: 3.2rem;
-        font-family: 'DM Serif Display', serif;
-        margin-top: 18px;
-        margin-bottom: 0;
+            font-size: 3.2rem;
+            font-family: 'DM Serif Display', serif;
+            margin-top: 18px;
+            margin-bottom: 0;
         }
 
         .subtitle {
-        font-size: 2.2rem;
-        font-family: 'DM Serif Display', serif;
-        font-weight: 400;
-        color: #222;
-        margin: 12px 0 32px 2px;
+            font-size: 2.2rem;
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            color: #222;
+            margin: 12px 0 32px 2px;
         }
 
         .ticket-section {
-        margin-bottom: 38px;
+            margin-bottom: 38px;
         }
 
         .ticket-section-title {
-        font-size: 1.55rem;
-        font-weight: bold;
-        color: #1d1d1d;
-        margin: 0 0 18px 6px;
-        font-family: 'Quicksand', Arial, sans-serif;
+            font-size: 1.55rem;
+            font-weight: bold;
+            color: #1d1d1d;
+            margin: 0 0 18px 6px;
+            font-family: 'Quicksand', Arial, sans-serif;
         }
 
         .tickets-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 48px 48px;
-        margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 48px 48px;
+            margin-bottom: 20px;
         }
 
         .ticket-card {
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 7px 0 rgba(0,0,0,0.12);
-        width: 340px;
-        height: 170px;
-        margin-bottom: 0;
-        padding: 17px 18px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-start;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 7px 0 rgba(0,0,0,0.12);
+            width: 340px;
+            height: 170px;
+            margin-bottom: 0;
+            padding: 17px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .ticket-title {
-        color: #888;
-        font-size: 0.92rem;
-        font-weight: 500;
-        margin-bottom: 2px;
+            color: #888;
+            font-size: 0.92rem;
+            font-weight: 500;
+            margin-bottom: 2px;
         }
 
         .ticket-id {
-        font-size: 1.16rem;
-        color: #232323;
-        font-weight: 600;
-        margin-bottom: 6px;
+            font-size: 1.16rem;
+            color: #232323;
+            font-weight: 600;
+            margin-bottom: 6px;
         }
 
         .ticket-desc {
-        font-size: 1rem;
-        color: #313131;
-        margin-bottom: 10px;
-        margin-top: 0;
+            font-size: 1rem;
+            color: #313131;
+            margin-bottom: 10px;
+            margin-top: 0;
         }
 
         .btn-detalle {
-        background: #f3d542;
-        color: #232323;
-        font-size: 1.04rem;
-        font-family: inherit;
-        font-weight: 700;
-        border-radius: 8px;
-        border: none;
-        box-shadow: 0 1px 3px 0 rgba(90,90,90,0.09);
-        padding: 10px 28px;
-        cursor: pointer;
-        transition: filter 0.12s;
-        align-self: flex-end;
+            background: #f3d542;
+            color: #232323;
+            font-size: 1.04rem;
+            font-family: inherit;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 1px 3px 0 rgba(90,90,90,0.09);
+            padding: 10px 28px;
+            cursor: pointer;
+            transition: filter 0.12s;
+            align-self: center;
+            /* centrado dentro de la tarjeta */
         }
 
         .btn-detalle:active {
-        filter: brightness(0.95);
+            filter: brightness(0.95);
         }
-        @@media (max-width: 1100px) {
-        .tickets-row
+
+        /* BOTONES MENU ABAJO */
+        .menu-bottom {
+            display: flex;
+            justify-content: center;
+            gap: 36px;
+            margin: 54px 0 24px 0;
+            flex-wrap: wrap;
+        }
+        .menu-bottom-btn {
+            background: #fff163;
+            color: #222;
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.45rem;
+            font-weight: 500;
+            padding: 18px 36px;
+            border-radius: 18px;
+            border: 2px solid #e0d400;
+            box-shadow: 0 3px 18px 0 rgba(150,150,150,0.10);
+            cursor: pointer;
+            min-width: 220px;
+            margin-bottom: 18px;
+            text-decoration: none;
+            transition: background 0.13s;
+            text-align: center;
+            display: inline-block;
+        }
+        .menu-bottom-btn:active {
+            background: #f8f5c3;
+        }
 
         {
-        gap: 30px 24px;
+            .tickets-row { gap: 30px 24px; }
+            .ticket-card { width: 98vw; max-width: 340px;}
+            .menu-bottom { flex-direction: column; align-items: center; gap: 20px; }
         }
-
-        .ticket-card {
-        width: 98vw;
-        max-width: 340px;
-        }
-
-        }
-        @@media (max-width: 700px) {
-        .welcome
-
         {
-        font-size: 1.5rem;
+            .center-header { text-align: center; }
+            .welcome { font-size: 1.5rem;}
+            .subtitle { font-size: 1rem;}
+            .ticket-section-title { font-size: 1.12rem;}
+            .tickets-row { flex-direction: column; gap: 24px 0; }
+            .ticket-card { width: 96vw; max-width: 340px;}
+            .menu-bottom-btn { font-size: 1.1rem; padding: 11px 13px; min-width: 140px;}
         }
 
-        .subtitle {
-        font-size: 1rem;
+        .iconos-top {
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
 
-        .ticket-section-title {
-        font-size: 1.12rem;
-        }
-
-        .tickets-row {
-        flex-direction: column;
-        gap: 24px 0;
-        }
-
-        .ticket-card {
-        width: 96vw;
-        max-width: 340px;
-        }
-
-        }</style>
+            .iconos-top img {
+                width: 30px;
+                margin-left: 10px;
+            }
+    </style>
 </head>
 <body>
+
+    <div class="iconos-top">
+
+        <a href="@Url.Action("Logout", "Login")" title="Cerrar sesión">
+            <img src="~/images/home_icono.png" alt="Inicio" />
+        </a>
+
+        <a href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
     <div class="container">
-        <div class="welcome">Bienvenido José</div>
-        <div class="subtitle">Mis tickets pendientes</div>
+        <div class="center-header">
+            <div class="bienvenido">Bienvenido @nombreUsuario</div>
+            <div class="subtitle">Mis tickets pendientes</div>
+        </div>
 
         <div class="ticket-section">
             <div class="ticket-section-title">No asignados</div>
             <div class="tickets-row">
-                <!--tickets NO asignados -->
                 @foreach (var ticket in (IEnumerable<dynamic>)ViewData["listadoTicketsPendientes"])
                 {
                     <div class="ticket-card">
@@ -168,11 +205,11 @@
                             <div class="ticket-desc">@ticket.titulo</div>
                             <div class="ticket-desc">Prioridad: @ticket.prioridad</div>
                         </div>
-                        <div class="d-flex">
+                        <div>
                             @using (Html.BeginForm("Asignar", "Admin", FormMethod.Get))
                             {
                                 <input type="hidden" name="idTicket" value="@ticket.id"/>
-                                <button class="btn-detalle justify-content-center">Ver Detalle</button>
+                                <button class="btn-detalle">Ver Detalle</button>
                             }
                         </div>
                     </div>
@@ -182,7 +219,6 @@
         <div class="ticket-section">
             <div class="ticket-section-title">Asignados</div>
             <div class="tickets-row">
-                <!--tickets activos -->
                 @foreach (var ticket in (IEnumerable<dynamic>)ViewData["listadoTicketsActivos"])
                 {
                     <div class="ticket-card">
@@ -202,6 +238,14 @@
                     </div>
                 }
             </div>
+        </div>
+
+        <!-- BOTONES DE MENU ABAJO -->
+        <div class="menu-bottom">
+            <a href="@Url.Action("CreaUsu", "Admin")" class="menu-bottom-btn">Crear usuarios</a>
+            <a href="@Url.Action("Dashboard", "Admin")" class="menu-bottom-btn">Dashboard</a>
+            <a href="@Url.Action("ListaUsuarios", "Admin")" class="menu-bottom-btn">Lista de usuarios</a>
+            <a href="@Url.Action("VerInformes", "Admin")" class="menu-bottom-btn">Ver informes</a>
         </div>
     </div>
 </body>
