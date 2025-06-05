@@ -282,23 +282,18 @@ namespace Vertex.Controllers
                               titulo = t.titulo
                           }).ToList();
 
-            Console.WriteLine("Ticket: " + idTicket.ToString() + " Tareas: " + tareas.Count + " Comentarios: " + comentarios.Count);
-
-            if (comentarios.Any(c => c == null))
+            var viewModel = new DetalleTicketCompletoViewModel
             {
-                Console.WriteLine("Hay comentarios nulos en la lista");
-            }
-
-            if (tareas.Any(t => t == null))
-            {
-                Console.WriteLine("Hay tareas nulas en la lista");
-            }
+                Detalle = detalleTicket,
+                Comentarios = comentarios,
+                Tareas = tareas
+            };
 
             ViewData["detalleTicket"] = detalleTicket;
             ViewData["Comentarios"] = comentarios;
             ViewData["Tareas"] = tareas;
 
-            return View();
+            return View(viewModel);
         }
 
 
