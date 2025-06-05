@@ -1,0 +1,225 @@
+﻿@model Vertex.Models.tickets
+@{
+    Layout = null;
+    var tecnicos = ViewBag.Tecnicos as List<dynamic>;
+    var tecnicoEncargadoId = ViewBag.TecnicoEncargadoId as int?;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Detalle Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 960px;
+            margin: 24px auto;
+            padding: 30px 32px 38px 32px;
+            border: 3px solid #8ea6c8;
+        }
+
+        .icon-left {
+            position: absolute;
+            left: 40px;
+            top: 28px;
+        }
+
+            .icon-left img {
+                width: 62px;
+            }
+
+        .ticket-title {
+            text-align: center;
+            font-size: 2.7rem;
+            margin-bottom: 18px;
+            margin-top: 0;
+            letter-spacing: 2px;
+        }
+
+        .fields {
+            display: flex;
+            gap: 38px;
+            justify-content: center;
+            margin-bottom: 6px;
+        }
+
+        .field {
+            flex: 1;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        input[type="text"], input[type="email"] {
+            width: 95%;
+            padding: 8px 14px;
+            border-radius: 18px;
+            border: 1px solid #333;
+            font-size: 1.13rem;
+            margin-bottom: 18px;
+            background: #fff;
+            font-family: inherit;
+        }
+
+        textarea {
+            width: 98%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            min-height: 48px;
+            background: #fff;
+        }
+
+        .desc {
+            margin-bottom: 18px;
+        }
+
+        .tables-row {
+            display: flex;
+            gap: 44px;
+            margin-top: 34px;
+            justify-content: center;
+        }
+
+        .tables-col {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1.4px solid #bbb;
+            text-align: left;
+        }
+
+        th {
+            background: #f5f5f5;
+        }
+
+        .actions {
+            text-align: right;
+        }
+
+        .select-box {
+            width: 220px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-top: 10px;
+        }
+        /* Responsive hack */
+        {
+            .fields, .tables-row
+
+        {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .field, .tables-col {
+            width: 100%;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="icon-left">
+        <a href="javascript:history.back()">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+    </div>
+    <div class="container">
+        <div class="ticket-title">Ticket #@Model.id</div>
+        <div class="fields">
+            <div class="field">
+                <label>Nombre</label>
+                <input type="text" value="@Model.cliente?.nombre" readonly />
+                <label>Numero de telefono</label>
+                <input type="text" value="@Model.cliente?.telefono" readonly />
+                <label>Categoria</label>
+                <input type="text" value="@Model.categoria?.categoria" readonly />
+            </div>
+            <div class="field">
+                <label>Apellido</label>
+                <input type="text" value="@Model.cliente?.apellido" readonly />
+                <label>Correo Electronico</label>
+                <input type="email" value="@Model.cliente?.email" readonly />
+                <label>Prioridad</label>
+                <input type="text" value="@Model.prioridad?.prioridad" readonly />
+            </div>
+            <div class="field">
+                <label>Nombre de la Aplicacion afectada</label>
+                <input type="text" value="@Model.aplicacion" readonly />
+                <label style="margin-top:20px;">Tecnico encargado</label>
+                <select class="select-box" disabled>
+                    @if (tecnicos != null)
+                    {
+
+                    }
+                </select>
+            </div>
+        </div>
+
+        <label>Descripcion del problema</label>
+        <textarea readonly>@Model.descripcion</textarea>
+
+        <div class="tables-row">
+            <div class="tables-col">
+                <h3>Tareas Realizadas</h3>
+                <table>
+                    <tr><th>Titulo</th><th></th></tr>
+                    @if (Model.tareas != null)
+                    {
+                        foreach (var tarea in Model.tareas)
+                        {
+                            <tr>
+                                <td>@tarea.titulo</td>
+                                <td><a href="@Url.Action("DetalleTarea", "Admin", new { id = tarea.id })">Ver</a></td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+            <div class="tables-col">
+                <h3>Comentarios</h3>
+                <table>
+                    <tr><th>Titulo</th><th></th></tr>
+                    @if (Model.comentarios != null)
+                    {
+                        foreach (var c in Model.comentarios)
+                        {
+                            <tr>
+                                <td>@c.titulo</td>
+                                <td><a href="@Url.Action("DetalleComentario", "Admin", new { id = c.id })">Ver</a></td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
