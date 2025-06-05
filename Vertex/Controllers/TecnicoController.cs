@@ -58,10 +58,52 @@ namespace Vertex.Controllers
             {
                 ticket.estado_ticket_id = 2;
                 _context.SaveChanges();
+
+                // Obtener datos del cliente o usuario
+                string destinatario = "";
+                string nombreCompleto = "";
+                if (ticket.cliente_id != null)
+                {
+                    var cliente = _context.clientes.FirstOrDefault(c => c.id == ticket.cliente_id);
+                    if (cliente != null)
+                    {
+                        destinatario = cliente.email;
+                        nombreCompleto = cliente.nombre + " " + cliente.apellido;
+                    }
+                }
+                else if (ticket.usuario_id != null)
+                {
+                    var usuario = _context.usuarios.FirstOrDefault(u => u.id == ticket.usuario_id);
+                    if (usuario != null)
+                    {
+                        destinatario = usuario.email;
+                        nombreCompleto = usuario.nombre + " " + usuario.apellido;
+                    }
+                }
+
+                // Enviar correo si se encontró destinatario
+                if (!string.IsNullOrEmpty(destinatario))
+                {
+                    string asunto = "Inicio de Trabajo - Ticket Vertex";
+                    string mensaje = $@"
+                Hola <b>{nombreCompleto}</b>,<br><br>
+                Tu ticket ha sido marcado como <b>en proceso</b>:<br><br>
+                <b>Número de Ticket:</b> {ticket.id}<br>
+                <b>Título:</b> {ticket.titulo}<br>
+                <b>Aplicación:</b> {ticket.aplicacion}<br>
+                <b>Descripción:</b> {ticket.descripcion}<br>
+                <b>Fecha de creación:</b> {ticket.fechacreacion:dd/MM/yyyy HH:mm}<br><br>
+                Un técnico ya está trabajando en tu solicitud.<br><br>
+                <i>Equipo Vertex</i>";
+
+                    correo enviarCorreo = new correo(_configuration);
+                    enviarCorreo.enviar(destinatario, asunto, mensaje);
+                }
             }
 
             return RedirectToAction("ver_detalle", new { id = id });
         }
+
 
         public IActionResult ver_detalle(int id)
         {
