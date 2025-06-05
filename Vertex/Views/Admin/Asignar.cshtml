@@ -1,0 +1,165 @@
+﻿@model Vertex.Models.AsignarTicketViewModel
+
+@{
+    ViewBag.Title = "Asignar miembro";
+    Layout = null;
+    var ticket = (dynamic)ViewData["detalleTicket"];
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        body {
+        background: #a1c8e3;
+        font-family: 'Quicksand', Arial, sans-serif;
+        }
+
+        .main-card {
+        background: #fff;
+        max-width: 1100px;
+        margin: 30px auto;
+        border-radius: 14px;
+        padding: 34px 36px 36px 36px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+        text-align: center;
+        font-family: 'DM Serif Display', serif;
+        font-size: 2.6rem;
+        margin-bottom: 20px;
+        }
+
+        .row-flex {
+        display: flex;
+        gap: 38px;
+        margin-bottom: 24px;
+        justify-content: space-between;
+        }
+
+        .column {
+        flex: 1;
+        min-width: 290px;
+        }
+
+        .form-label {
+        font-weight: bold;
+        margin-bottom: 3px;
+        margin-top: 15px;
+        font-size: 1.1rem;
+        }
+
+        .form-input, .form-select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 22px;
+        border: 1.2px solid #222;
+        font-size: 1.11rem;
+        margin-bottom: 8px;
+        font-family: inherit;
+        font-weight: 600;
+        background: #fff;
+        }
+
+        textarea.form-input {
+        border-radius: 12px;
+        min-height: 66px;
+        margin-top: 3px;
+        }
+
+        .flex-trio {
+        display: flex;
+        gap: 36px;
+        margin-bottom: 22px;
+        justify-content: space-between;
+        }
+
+        .btn-enviar {
+        background: #f9df56;
+        color: #232323;
+        font-size: 1.54rem;
+        font-family: 'DM Serif Display', serif;
+        font-weight: 600;
+        border-radius: 22px;
+        border: none;
+        padding: 13px 38px;
+        cursor: pointer;
+        margin-left: 30px;
+        transition: filter 0.1s;
+        }
+
+        .btn-enviar:active {
+        filter: brightness(0.92);
+        }
+
+        .asignar-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 36px;
+        margin-top: 40px;
+        }
+        @@media (max-width: 900px) {
+        .row-flex, .flex-trio, .asignar-row
+
+        {
+        flex-direction: column;
+        gap: 12px;
+        }
+
+        .main-card {
+        padding: 22px 7vw;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="main-card">
+        <h1>Ticket #@ticket.id</h1>
+        <form method="post" action="@Url.Action("Asignar", "Admin")" onsubmit="return confirm('¿Estás seguro la asignacion y la nueva prioridad?');">
+            <div class="row-flex">
+                <div class="column">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-input" value="@ticket.nombre" readonly />
+
+                    <label class="form-label">Numero de telefono</label>
+                    <input type="text" class="form-input" value="@ticket.telefono" readonly />
+
+                    <label class="form-label">Categoria</label>
+                    <input type="text" class="form-input" value="@ticket.categoria" readonly />
+                </div>
+                <div class="column">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" class="form-input" value="@ticket.apellido" readonly />
+
+                    <label class="form-label">Correo Electronico</label>
+                    <input type="text" class="form-input" value="@ticket.email" readonly />
+
+                    <label class="form-label">Prioridad</label>
+                    <input type="text" class="form-input" value="@ticket.prioridad" readonly />
+                </div>
+                <div class="column">
+                    <label class="form-label">Nombre de la Aplicacion afectada</label>
+                    <input type="text" class="form-input" value="@ticket.aplicacion" readonly />
+                </div>
+            </div>
+            <div>
+                <label class="form-label">Descripcion del problema</label>
+                <textarea class="form-input" rows="3" readonly>@ticket.descripcion</textarea>
+            </div>
+
+             <div class="asignar-row">
+                <div>
+                    <label style="font-weight:bold; font-size:1.13rem; margin-right:14px;">Asigne un tecnico al ticket</label>
+                    @Html.DropDownList("tecnicos", ViewData["Tecnicos"] as SelectList, "Seleccione al tecnico para el ticket", new { @class = "form-control form-select" })
+                </div>
+                <button type="submit" class="btn-enviar">Asignar Técnico</button>
+             </div>
+        </form>
+    </div>
+</body>
+</html>

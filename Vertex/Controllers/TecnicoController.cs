@@ -2,7 +2,7 @@
 using Vertex.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Mvc.Rendering; // Para SelectListItem
 
 namespace Vertex.Controllers
 {
@@ -51,9 +51,9 @@ namespace Vertex.Controllers
         public IActionResult IniciarTrabajo(int id)
         {
             var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
-            if (ticket != null && ticket.estado_ticket_id == 1) // Solo si está pendiente
+            if (ticket != null && ticket.estado_ticket_id == 1)
             {
-                ticket.estado_ticket_id = 2; // "En progreso"
+                ticket.estado_ticket_id = 2;
                 _context.SaveChanges();
             }
 
@@ -78,22 +78,22 @@ namespace Vertex.Controllers
             var estado = _context.estados_tickets.FirstOrDefault(e => e.id == ticket.estado_ticket_id);
             ViewBag.Estado = estado?.estado ?? "Desconocido";
 
-            return View(ticket); // Esto carga Views/Tecnico/ver_detalle.cshtml
+            return View(ticket);
         }
+
         [HttpPost]
         public IActionResult FinalizarTrabajo(int id)
         {
             var ticket = _context.tickets.FirstOrDefault(t => t.id == id);
-            if (ticket != null && ticket.estado_ticket_id == 2) // Solo si está en progreso
+            if (ticket != null && ticket.estado_ticket_id == 2)
             {
-                ticket.estado_ticket_id = 4; // "Resuelto"
+                ticket.estado_ticket_id = 4;
                 _context.SaveChanges();
             }
 
             return RedirectToAction("ver_detalle", new { id = id });
         }
 
-        // GET: formulario de comentario
         [HttpGet]
         public IActionResult AgregarComentario(int ticketId)
         {
@@ -105,8 +105,6 @@ namespace Vertex.Controllers
             return View();
         }
 
-
-        // POST: guardar comentario
         [HttpPost]
         public IActionResult AgregarComentario(int ticketId, string titulo, string comentario)
         {
@@ -119,7 +117,7 @@ namespace Vertex.Controllers
                 titulo = titulo,
                 comentario = comentario,
                 ticket_id = ticketId,
-                usuario_id = tecnicoId.Value // <- solución
+                usuario_id = tecnicoId.Value
             };
 
             _context.comentarios.Add(nuevoComentario);
@@ -190,6 +188,51 @@ namespace Vertex.Controllers
 
 
 
+        // ----------- MÉTODOS NUEVOS PARA CREAR TICKET -----------
 
+        [HttpGet]
+        public IActionResult CrearTicket()
+        {
+            // Llenar combos desde la base de datos
+            ViewBag.Categorias = _context.categorias
+                .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
+                .ToList();
+
+            ViewBag.Prioridades = _context.prioridades
+                .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
+                .ToList();
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CrearTicket(tickets ticket)
+        {
+            if (ModelState.IsValid)
+            {
+                ticket.fechacreacion = DateTime.Now;
+                ticket.estado_ticket_id = 1; // Pendiente
+
+                // Asignar usuario/cliente de sesión si tienes el id
+                // ticket.usuario_id = ...;
+                // ticket.cliente_id = ...;
+
+                _context.tickets.Add(ticket);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index", "Cliente");
+            }
+
+            // Si falla, recarga los combos
+            ViewBag.Categorias = _context.categorias
+                .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.categoria })
+                .ToList();
+
+            ViewBag.Prioridades = _context.prioridades
+                .Select(p => new SelectListItem { Value = p.id.ToString(), Text = p.prioridad })
+                .ToList();
+
+            return View(ticket);
+        }
     }
 }
