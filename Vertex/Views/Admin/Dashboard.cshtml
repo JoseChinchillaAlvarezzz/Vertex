@@ -1,0 +1,256 @@
+﻿@model Vertex.Models.DashboardViewModel
+@using System.Text.Json
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard - Administración</title>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+       
+        body {
+            background: #abd4eb;
+            font-family: 'DM Serif Display', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            height: 60px;
+            background: #abd4eb;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            
+        }
+
+            .header h1 {
+                margin: 0;
+                color: #232323;
+                font-size: 1.8rem;
+            }
+
+        .content {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        
+        .chart-card {
+            background: white;
+            border: 2px solid #232323;
+            border-radius: 8px;
+            padding: 16px;
+            box-sizing: border-box;
+            
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+            .chart-card h3 {
+                text-align: center;
+                margin: 0 0 12px 0;
+                font-size: 1.3rem;
+                font-weight: bold;
+            }
+        @@media (min-width: 1200px) {
+           
+            .chart-card.half {
+                width: calc(48% - 20px);
+                max-width: 48%;
+            }
+        }
+
+        .chart-card.full {
+            width: 95% !important;
+            max-width: 95%;
+        }
+
+        /* Por defecto Chart.js expande el <canvas> al contenedor; aquí limitamos */
+        .chart-card canvas {
+            display: block;
+            margin: 0 auto;
+           
+            max-height: 300px;
+            width: auto !important; 
+            height: 300px !important; 
+        }
+
+        .header {
+            position: relative;
+            height: 60px;
+            background: #abd4eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0; 
+        }
+
+            .header h1 {
+                margin: 0;
+                font-size: 1.8rem;
+                color: #232323;
+            }
+
+            .header a.back-btn {
+                position: absolute;
+                left: 16px; 
+                top: 12px; 
+            }
+
+                .header a.back-btn img {
+                    width: 36px;
+                    height: 36px;
+                }
+    </style>
+</head>
+<body>
+    <div class="header">
+       
+        <a class="back-btn" href="javascript:history.back()" title="Regresar">
+            <img src="~/images/regres_icono.png" alt="Regresar" />
+        </a>
+
+        <h1>Dashboard de Administración</h1>
+    </div>
+
+
+
+    <div class="content">
+
+        <div class="chart-card half">
+            <h3>Top Prioridades</h3>
+            <canvas id="chartPriorities"></canvas>
+        </div>
+
+        <div class="chart-card half">
+            <h3>Tickets últimos 30 días por Aplicación</h3>
+            <canvas id="chartApplications"></canvas>
+        </div>
+
+        <div class="chart-card full">
+            <h3>Top Técnicos con Tickets Resueltos</h3>
+            <canvas id="chartTechnicians"></canvas>
+        </div>
+
+    </div>
+
+    <script>
+        
+        (function() {
+            const labels1 = @Html.Raw(JsonSerializer.Serialize(Model.PriorityCounts.Keys));
+            const data1   = @Html.Raw(JsonSerializer.Serialize(Model.PriorityCounts.Values));
+
+            new Chart(
+                document.getElementById('chartPriorities'),
+                {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels1,
+                        datasets: [{
+                            data: data1,
+                            backgroundColor: [
+                                '#FF9999', // Alta
+                                '#FFCC66', // Media
+                                '#66CC99', // Baja
+                                '#FF6666'  // Crítica
+                            ],
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { boxWidth: 20, padding: 15 }
+                            }
+                        }
+                    }
+                }
+            );
+        })();
+
+
+       
+        (function() {
+            const labels2 = @Html.Raw(JsonSerializer.Serialize(Model.ApplicationCountsLast30Days.Keys));
+            const data2   = @Html.Raw(JsonSerializer.Serialize(Model.ApplicationCountsLast30Days.Values));
+
+            new Chart(
+                document.getElementById('chartApplications'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: labels2,
+                        datasets: [{
+                            label: 'Cantidad de Tickets',
+                            data: data2,
+                            backgroundColor: '#66A3FF'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                }
+            );
+        })();
+
+
+        (function() {
+            const labels3 = @Html.Raw(JsonSerializer.Serialize(Model.TechnicianResolvedCounts.Keys));
+            const data3   = @Html.Raw(JsonSerializer.Serialize(Model.TechnicianResolvedCounts.Values));
+
+            new Chart(
+                document.getElementById('chartTechnicians'),
+                {
+                    type: 'pie',
+                    data: {
+                        labels: labels3,
+                        datasets: [{
+                            data: data3,
+                            backgroundColor: [
+                                '#00CCFF',
+                                '#FFCC33',
+                                '#CC66FF',
+                                '#66CC66'
+                                
+                            ],
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { boxWidth: 20, padding: 15 }
+                            }
+                        }
+                    }
+                }
+            );
+        })();
+    </script>
+</body>
+</html>

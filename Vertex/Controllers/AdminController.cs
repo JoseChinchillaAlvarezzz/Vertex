@@ -406,5 +406,66 @@ namespace Vertex.Controllers
             return RedirectToAction("Index", "Admin", new { id = ticketId });
         }
 
+        public IActionResult Dashboard()
+        {
+            // 1) DISTRIBUCIÓN POR PRIORIDAD (conteo total de tickets por prioridad)
+            var priorityCounts = _context.tickets
+                .Include(t => t.prioridad)
+                .GroupBy(t => t.prioridad.prioridad)
+                .Select(g => new
+                {
+                    PriorityName = g.Key,
+                    Count = g.Count()
+                })
+                .ToDictionary(x => x.PriorityName, x => x.Count);
+
+            // 2) TICKETS ÚLTIMOS 30 DÍAS POR APLICACIÓN
+            var fromDate = DateTime.Today.AddDays(-30);
+            var appCounts = _context.tickets
+                .Where(t => t.fechacreacion >= fromDate &&
+                            !string.IsNullOrEmpty(t.aplicacion))
+                .GroupBy(t => t.aplicacion)
+                .Select(g => new
+                {
+                    AppName = g.Key!,
+                    Count = g.Count()
+                })
+                .ToDictionary(x => x.AppName, x => x.Count);
+
+            // 3) TOP TÉCNICOS CON MÁS TICKETS RESUELTOS
+            //    Hacemos un join manual: asignaciones → tickets → usuarios
+            var techResolved = (
+                from a in _context.asignaciones
+                join t in _context.tickets on a.ticket_id equals t.id
+                where t.estado_ticket_id == 4              // solo “Resuelto”
+                group a by a.usuario_id into grp
+                select new
+                {
+                    TechnicianId = grp.Key,
+                    Count = grp.Count()
+                }
+            )
+            .Join(
+                _context.usuarios,
+                grp => grp.TechnicianId,
+                u => u.id,
+                (grp, u) => new
+                {
+                    FullName = u.nombre + " " + u.apellido,
+                    Count = grp.Count
+                }
+            )
+            .ToDictionary(x => x.FullName, x => x.Count);
+
+            // Empaquetamos en el ViewModel
+            var vm = new DashboardViewModel
+            {
+                PriorityCounts = priorityCounts,
+                ApplicationCountsLast30Days = appCounts,
+                TechnicianResolvedCounts = techResolved
+            };
+
+            return View(vm);
+        }
     }
 }
